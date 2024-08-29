@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Badge extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -17,16 +18,8 @@ class Badge extends Model
         'requirement_type',
     ];
 
-    public function users(){
+    public function users()
+    {
         return $this->belongsToMany(User::class)->withTimestamps();
-    }
-
-    public function awardBadge(Badge $badge){
-                if (!$this->badge->contains($badge->id)){
-                    $this->badge()->attach($badge, ['awarded_at' => now()]);
-                }
-    }
-    public function removeBadge (Badge $badge){
-         $this->badge()->detach($badge);
     }
 }

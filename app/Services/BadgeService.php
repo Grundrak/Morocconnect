@@ -9,7 +9,9 @@ class BadgeService
 {
     public function checkAndAwardBadges(User $user)
     {
-
+        if (!$user instanceof User) {
+            return;
+        }
         $this->checkPostBadges($user);
         $this->checkEventBadges($user);
         $this->checkRoleBadges($user);

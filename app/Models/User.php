@@ -2,21 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use App\Models\Post;
+use App\Models\Role;
+use App\Models\Badge;
 
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'username',
         'email',
@@ -26,49 +23,73 @@ class User extends Authenticatable implements JWTSubject
         'location',
         'birthday',
         'name',
-        'badges',
         'reputation',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'badges' => 'array',
-            'birthday' => 'date',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'birthday' => 'date',
+    ];
+
     public function getJWTIdentifier()
     {
-        return $this->getkey();
+        return $this->getKey();
     }
+
     public function getJWTCustomClaims()
     {
         return [];
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class);
     }
 
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class)->withTimestamps();
+    }
+
     public function hasRole($role)
     {
-        return $this->roles()->where('slug', $role)->exists();
+        return $this->roles()->where('name', $role)->exists();
+    }
+
+    public function awardBadge(Badge $badge)
+    {
+        if (!$this->badges->contains($badge->id)) {
+            $this->badges()->attach($badge, ['awarded_at' => now()]);
+        }
+    }
+
+    public function removeBadge(Badge $badge)
+    {
+        $this->badges()->detach($badge);
+    }
+
+    public function incrementReputation($amount)
+    {
+        $this->increment('reputation', $amount);
+    }
+
+    public function decrementReputation($amount)
+    {
+        $this->decrement('reputation', $amount);
+        if ($this->reputation < 0) {
+            $this->reputation = 0;
+            $this->save();
+        }
     }
 }
