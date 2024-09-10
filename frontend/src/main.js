@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
 
 import HomePage from "./pages/HomePage.vue";
+import Login from "./pages/Login.vue"
+import Register from "./pages/Register.vue";
 import "./global.css";
 
 const routes = [
@@ -11,6 +13,16 @@ const routes = [
     name: "Home",
     component: HomePage,
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
+  }
 ];
 
 const router = createRouter({
