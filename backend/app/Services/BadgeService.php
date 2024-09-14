@@ -13,7 +13,7 @@ class BadgeService
             return;
         }
         $this->checkPostBadges($user);
-        $this->checkEventBadges($user);
+        // $this->checkEventBadges($user);
         $this->checkRoleBadges($user);
     }
     private function checkPostBadges(User $user)
@@ -24,14 +24,14 @@ class BadgeService
             $this->awardBadge($user, 'First post');
         }
     }
-    private function checkEventBadges(User $user)
-    {
-        $eventCount = $user->events()->count();
+    // private function checkEventBadges(User $user)
+    // {
+    //     $eventCount = $user->events()->count();
 
-        if ($eventCount == 1) {
-            $this->awardBadge($user, 'First participation');
-        }
-    }
+    //     if ($eventCount == 1) {
+    //         $this->awardBadge($user, 'First participation');
+    //     }
+    // }
 
     private function checkRoleBadges(User $user)
     {

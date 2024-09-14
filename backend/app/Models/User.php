@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Post;
 use App\Models\Role;
 use App\Models\Badge;
@@ -84,6 +84,7 @@ class User extends Authenticatable implements JWTSubject
     {
         $this->increment('reputation', $amount);
     }
+    
 
     public function decrementReputation($amount)
     {
@@ -92,5 +93,21 @@ class User extends Authenticatable implements JWTSubject
             $this->reputation = 0;
             $this->save();
         }
+    }
+
+    //  {follow and unfloow systeme}
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id');
+    }
+
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id');
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('followed_id', $user->id)->exists();
     }
 }

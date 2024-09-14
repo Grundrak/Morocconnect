@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Like;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
@@ -14,7 +15,8 @@ class Post extends Model
         'content',
         'image',
         'verification_request',
-        'user_id', // Add this if it's not already included
+        'user_id', 
+        
     ];
 
     protected $casts = [
@@ -25,7 +27,10 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
-
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
     public function requestVerification($reason)
     {
         $this->verification_request = $reason;
@@ -38,6 +43,10 @@ class Post extends Model
         $this->is_verified = true;
         $this->verification_status = 'approved';
         $this->save();
+    }
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
     }
 
     public function rejectVerification()
