@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Badge extends Model
 {
@@ -18,6 +19,12 @@ class Badge extends Model
         'requirement_type',
     ];
 
+    protected $appends = ['icon_url'];
+
+    public function getIconUrlAttribute()
+    {
+        return $this->icon ? Storage::url($this->icon) : null;
+    }
     public function users()
     {
         return $this->belongsToMany(User::class)->withTimestamps();

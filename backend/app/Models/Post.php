@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Like;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
@@ -23,6 +24,12 @@ class Post extends Model
         'is_verified' => 'boolean',
     ];
 
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? Storage::url($this->image) : null;
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

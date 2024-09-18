@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Post;
 use App\Models\Role;
 use App\Models\Badge;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Notifications\Notifiable;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -37,6 +38,12 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
         'birthday' => 'date',
     ];
+    protected $appends = ['avatar_url'];
+
+    public function getAvatarUrlAttribute()
+    {
+        return $this->avatar ? Storage::url($this->avatar) : null;
+    }
 
     public function getJWTIdentifier()
     {
@@ -94,6 +101,7 @@ class User extends Authenticatable implements JWTSubject
             $this->save();
         }
     }
+
 
     //  {follow and unfloow systeme}
     public function followers(): BelongsToMany

@@ -13,14 +13,14 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'nullable|string|max:255', // Added name field validation
+            'name' => 'nullable|string|max:255',
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
         $user = User::create([
-            'name' => $request->name ?? '', // Added name field with default empty string
+            'name' => $request->name ?? '',
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -30,7 +30,22 @@ class AuthController extends Controller
         $token = JWTAuth::fromUser($user);
         return $this->respondWithToken($token);
     }
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|string'
+        ]);
 
+        $user = User::find(Auth::id());
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $user->avatar = $request->avatar;
+        $user->save();
+
+        return response()->json($user);
+    }
     public function login(Request $request)
     {
         $request->validate([
@@ -64,5 +79,36 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
+    }
+
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return response()->json($user);
+    }
+
+    public function update(Request $request)
+    {
+        $userId = Auth::id();
+        $user = User::findOrFail($userId);
+        
+        $validatedData = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
+            'email' => 'nullable|string|email|max:255|unique:users,email,' . $user->id,
+            'bio' => 'nullable|string|max:1000',
+            'location' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date',
+        ]);
+
+        foreach ($validatedData as $key => $value) {
+            if (!is_null($value)) {
+                $user->$key = $value;
+            }
+        }
+
+        $user->save();
+
+        return response()->json($user);
     }
 }
