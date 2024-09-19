@@ -16,8 +16,8 @@ class CommentController extends Controller
     use AuthorizesRequests;
     public function index(Post $post)
     {
-        $comments = $post->comments()->with('user')->withCount('replies')->paginate(10);
-
+        $comments = $post->comments()->with('user')->withCount('replies')->get();
+    
         return response()->json($comments);
     }
 

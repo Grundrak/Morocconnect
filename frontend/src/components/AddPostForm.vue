@@ -34,44 +34,60 @@
         </button>
       </div>
     </form>
+    <div v-if="error" class="mt-2 text-red-600">{{ error }}</div>
   </div>
 </template>
 
 <script>
 import { ref } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'AddPostForm',
-  emits: ['close'],
-  setup() {
+  emits: ['close', 'post-added'],
+  setup(props, { emit }) {
+    const store = useStore()
     const title = ref('')
     const content = ref('')
     const image = ref(null)
+    const error = ref('')
 
     const handleImageUpload = (event) => {
       image.value = event.target.files[0]
     }
 
     const submitPost = async () => {
-      // Here you would typically send the data to your backend
-      // For now, we'll just log it to the console
-      console.log({
-        title: title.value,
-        content: content.value,
-        image: image.value
-      })
+      try {
+        const formData = new FormData()
+        formData.append('title', title.value)
+        formData.append('content', content.value)
+        if (image.value) {
+          formData.append('image', image.value)
+        }
 
-      // TODO: Implement actual API call to your backend
+        console.log('Submitting post:', Object.fromEntries(formData))
 
-      // Close the form after submission
-      emit('close')
+        const result = await store.dispatch('posts/createPost', formData)
+        
+        if (result.success) {
+          console.log('Post created successfully:', result.post)
+          emit('post-added', result.post)
+          emit('close')
+        } else {
+          error.value = result.error || 'Failed to create post'
+        }
+      } catch (err) {
+        console.error('Error creating post:', err)
+        error.value = err.message || 'An unexpected error occurred'
+      }
     }
 
     return {
       title,
       content,
       handleImageUpload,
-      submitPost
+      submitPost,
+      error
     }
   }
 }
