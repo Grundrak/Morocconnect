@@ -1,3 +1,4 @@
+<!-- src/components/PostCard.vue -->
 <template>
   <div class="bg-white rounded-lg shadow mb-6 overflow-hidden w-full">
     <div class="p-4">
@@ -21,7 +22,7 @@
       </div>
       <p v-if="post.content" class="mb-4 text-gray-800">{{ post.content }}</p>
       <p v-else class="mb-4 text-gray-500 italic">No content</p>
-      <img v-if="post.image" :src="post.image" :alt="post.user ? post.user.name : 'Post image'"
+      <img v-if="post.image" :src="getImageUrl(post.image)" :alt="post.user ? post.user.name : 'Post image'"
         class="w-full rounded-lg mb-4">
       <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
         <button @click="toggleLike" class="flex items-center hover:text-blue-500 bg-white">
@@ -120,6 +121,14 @@ export default {
       return name && typeof name === 'string' ? name.charAt(0).toUpperCase() : '?'
     }
 
+    const getImageUrl = (imagePath) => {
+      // Ensure the image path is correctly constructed
+      if (imagePath.startsWith('http')) {
+        return imagePath;
+      }
+      return `http://moroconect.test/storage/${imagePath}`;
+    }
+
     const toggleLike = async () => {
       console.log('Before toggle:', props.post.likes_count, props.post.is_liked);
       try {
@@ -204,7 +213,7 @@ export default {
     return {
       newComment, postLikes, isLiked, currentUser, showComments, comments, commentsLoading,
       getInitial, toggleLike, toggleComments, submitComment, handleShare, handleBookmark,
-      handleMoreOptions, displayedComments, showAllComments
+      handleMoreOptions, displayedComments, showAllComments, getImageUrl
     }
   }
 }

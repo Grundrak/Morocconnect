@@ -19,11 +19,11 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-    
+
         try {
             $user = User::create([
                 'name' => $request->name ?? '',
@@ -31,9 +31,9 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
-    
+
             $token = JWTAuth::fromUser($user);
-    
+
             return response()->json([
                 'success' => true,
                 'user' => $user,
@@ -70,13 +70,13 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-    
+
         $credentials = $request->only('email', 'password');
-    
+
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         $user = Auth::user();
         return response()->json([
             'user' => $user,
@@ -104,7 +104,19 @@ class AuthController extends Controller
             'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
     }
+    public function suggestedUsers(Request $request)
+    {
+        $currentUser = $request->user();
+        $suggestedUsers = User::where('id', '!=', $currentUser->id)
+            ->whereDoesntHave('followers', function ($query) use ($currentUser) {
+                $query->where('follower_id', $currentUser->id);
+            })
+            ->inRandomOrder()
+            ->take(5)
+            ->get(['id', 'name', 'username', 'avatar']);
 
+        return response()->json($suggestedUsers);
+    }
     public function show($id)
     {
         $user = User::findOrFail($id);
@@ -115,7 +127,7 @@ class AuthController extends Controller
     {
         $userId = Auth::id();
         $user = User::findOrFail($userId);
-        
+
         $validatedData = $request->validate([
             'name' => 'nullable|string|max:255',
             'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
@@ -135,5 +147,4 @@ class AuthController extends Controller
 
         return response()->json($user);
     }
-    
 }

@@ -5,7 +5,9 @@ import LandingPage from "../pages/LandingPage.vue";
 import HomePage from "../pages/HomePage.vue";
 import Login from "../pages/Login.vue";
 import Register from "../pages/Register.vue";
-import store from "../store/index"
+import store from "../store/index";
+import UserProfil from "../pages/UserProfil.vue";
+
 const routes = [
   {
     path: "/",
@@ -23,6 +25,12 @@ const routes = [
     meta: {
       requiresAuth: true,
     },
+    
+  },
+  {
+    path: '/profile',
+    name: 'UserProfile',
+    component: UserProfil
   },
   {
     path: "/login",

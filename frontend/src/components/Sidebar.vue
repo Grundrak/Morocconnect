@@ -21,14 +21,15 @@
     <div class="p-4 border-t" v-if="!isMinimized">
       <div v-if="user" class="flex items-center justify-between">
         <div class="flex items-center">
-          <img :src="user.avatar" :alt="user.name" class="w-10 h-10 rounded-full mr-3">
-          <div>
-            <p class="font-semibold">{{ user.name }}</p>
-            <p class="text-sm text-gray-500">{{ user.membershipType }}</p>
-          </div>
+          <router-link :to="{ name: 'UserProfile', params: { id: user.id } }" class="flex items-center no-underline text-gray-950">
+            <img :src="user.avatar" :alt="user.name" class="w-10 h-10 rounded-full mr-3">
+            <div>
+              <p class="">{{ user.name }}</p>
+            </div>
+          </router-link>
         </div>
-        <button @click="logout" class="text-red-500 hover:text-red-700">
-          Logout
+        <button @click="logout" class="text-red-500 hover:text-red-700 bg-white cursor-pointer">
+          <svg-icon name="logout" class="w-5 h-5" />
         </button>
       </div>
       <div v-else class="text-center text-gray-500">
@@ -42,12 +43,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import SidebarItem from './SidebarItem.vue'
+import SvgIcon from './SvgIcon.vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
   name: 'Sidebar',
-  components: { SidebarItem },
+  components: { SidebarItem, SvgIcon },
   setup() {
     const user = ref(null)
     const { width } = useWindowSize()
@@ -67,24 +69,24 @@ export default {
     ]
 
     const fetchUserData = async () => {
-  try {
-    if (!store.getters['auth/isAuthenticated']) {
-      console.error('No token found, redirecting to login');
-      router.push('/login');
-      return;
-    }
-    const success = await store.dispatch('auth/fetchUser');
-    if (success) {
-      user.value = store.state.auth.user;
-    } else {
-      console.error('Failed to fetch user data');
-      router.push('/login');
-    }
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-    router.push('/login');
-  }
-};
+      try {
+        if (!store.getters['auth/isAuthenticated']) {
+          console.error('No token found, redirecting to login');
+          router.push('/login');
+          return;
+        }
+        const success = await store.dispatch('auth/fetchUser');
+        if (success) {
+          user.value = store.state.auth.user;
+        } else {
+          console.error('Failed to fetch user data');
+          router.push('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        router.push('/login');
+      }
+    };
 
     const logout = async () => {
       try {
@@ -99,6 +101,7 @@ export default {
         router.push('/login');
       }
     };
+
     onMounted(() => {
       fetchUserData()
     })

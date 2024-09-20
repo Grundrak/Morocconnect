@@ -1,4 +1,6 @@
-import api from "../../services/api";
+// src/store/modules/posts.js
+
+import api from '../../services/api'
 
 export default {
   namespaced: true,
@@ -11,6 +13,9 @@ export default {
   mutations: {
     SET_POSTS(state, posts) {
       state.posts = posts;
+    },
+    ADD_POST(state, post) {
+      state.posts.unshift(post);
     },
     UPDATE_POST(state, updatedPost) {
       const index = state.posts.findIndex((post) => post.id === updatedPost.id);
@@ -66,6 +71,16 @@ export default {
         commit("SET_ERROR", error.message || "Failed to fetch posts");
       } finally {
         commit("SET_LOADING", false);
+      }
+    },
+    async createPost({ commit }, formData) {
+      try {
+        const response = await api.post('/post', formData);
+        commit('ADD_POST', response.data);
+        return { success: true, post: response.data };
+      } catch (error) {
+        console.error('Error creating post:', error);
+        return { success: false, error: error.message || 'Failed to create post' };
       }
     },
     async likePost({ commit }, postId) {

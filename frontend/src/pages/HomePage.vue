@@ -7,11 +7,6 @@
     <template v-else>
       <PostCard v-for="post in posts" :key="post.id" :post="post" />
     </template>
-    <!-- <div v-if="pagination">
-      <p>Page {{ pagination.currentPage }} of {{ pagination.lastPage }}</p>
-      <p>Total posts: {{ pagination.total }}</p>
-    </div> -->
-    <!-- <pre>{{ debugPosts }}</pre> -->
   </div>
 </template>
 

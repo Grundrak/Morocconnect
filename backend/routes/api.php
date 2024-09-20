@@ -31,6 +31,7 @@ Route::middleware(['cors'])->group(function () {
         Route::get('search', [SearchController::class, 'search']);
 
         // User routes
+        Route::get('users/suggested', [AuthController::class, 'suggestedUsers']);
         Route::get('users/{id}', [AuthController::class, 'show']);
         Route::put('users/profile', [AuthController::class, 'update']);
         Route::post('users/avatar', [AuthController::class, 'updateAvatar']);
