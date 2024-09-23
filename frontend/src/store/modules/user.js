@@ -1,4 +1,4 @@
-// src/store/modules/user.js
+
 
 import api from '../../services/api'
 
@@ -7,6 +7,9 @@ export default {
   state: {
     currentUser: null,
     suggestedUsers: [],
+    profileUser: null,
+    loading: false,
+    error: null
   },
   mutations: {
     SET_CURRENT_USER(state, user) {
@@ -17,6 +20,15 @@ export default {
     },
     REMOVE_SUGGESTED_USER(state, userId) {
       state.suggestedUsers = state.suggestedUsers.filter(user => user.id !== userId)
+    },
+    SET_PROFILE_USER(state, user) {
+      state.profileUser = user
+    },
+    SET_LOADING(state, isLoading) {
+      state.loading = isLoading
+    },
+    SET_ERROR(state, error) {
+      state.error = error
     }
   },
   actions: {
@@ -73,10 +85,28 @@ export default {
         console.error('Error uploading avatar:', error)
         throw error
       }
+    },
+    async fetchUserProfile({ commit }, userId) {
+      commit('SET_LOADING', true)
+      commit('SET_ERROR', null)
+      try {
+        const response = await api.get(`/users/${userId}`)
+        commit('SET_PROFILE_USER', response.data)
+        return response.data
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+        commit('SET_ERROR', error.message || 'Failed to fetch user profile')
+        throw error
+      } finally {
+        commit('SET_LOADING', false)
+      }
     }
   },
   getters: {
     currentUser: state => state.currentUser,
     suggestedUsers: state => state.suggestedUsers,
+    profileUser: state => state.profileUser,
+    isLoading: state => state.loading,
+    error: state => state.error
   }
 }

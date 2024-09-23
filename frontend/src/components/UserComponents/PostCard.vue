@@ -1,6 +1,5 @@
-<!-- src/components/PostCard.vue -->
 <template>
-  <div class="bg-white rounded-lg shadow mb-6 overflow-hidden w-full">
+  <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg shadow mb-6 overflow-hidden w-full">
     <div class="p-4">
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center">
@@ -16,42 +15,42 @@
             <p v-if="post.user && post.user.username" class="text-sm text-gray-500 m-0">{{ post.user.username }}</p>
           </div>
         </div>
-        <button @click="handleMoreOptions" class="p-1 rounded-full focus:outline-none focus:ring-2 bg-white">
+        <button @click="handleMoreOptions" class="p-1 rounded-full focus:outline-none focus:ring-2 bg-white dark:bg-gray-800">
           <svg-icon name="dotsthreeoutlinevertical" class="h-5 w-5" />
         </button>
       </div>
-      <p v-if="post.content" class="mb-4 text-gray-800">{{ post.content }}</p>
+      <p v-if="post.content" class="text-gray-800 dark:text-gray-200 mb-4">{{ post.content }}</p>
       <p v-else class="mb-4 text-gray-500 italic">No content</p>
       <img v-if="post.image" :src="getImageUrl(post.image)" :alt="post.user ? post.user.name : 'Post image'"
         class="w-full rounded-lg mb-4">
       <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-        <button @click="toggleLike" class="flex items-center hover:text-blue-500 bg-white">
+        <button @click="toggleLike" class="flex items-center hover:text-blue-500 bg-white dark:bg-gray-800">
           <svg-icon :name="isLiked ? 'thumbsup' : 'thumbsup'" class="w-4 h-4 mr-1"
-            :class="{ 'text-blue-500': isLiked }" />
+            :class="{ 'text-blue-500 ': isLiked }" />
           <span>{{ postLikes }}</span>
         </button>
-        <button @click="toggleComments" class="flex items-center hover:text-blue-500 bg-white">
+        <button @click="toggleComments" class="flex items-center hover:text-blue-500 bg-white  dark:bg-gray-800">
           <svg-icon name="chatdots" class="w-4 h-4 mr-1" />
           <span>{{ comments.length }}</span>
         </button>
-        <button @click="handleShare" class="flex items-center hover:text-blue-500 bg-white">
+        <button @click="handleShare" class="flex items-center hover:text-blue-500 bg-white dark:bg-gray-800">
           <svg-icon name="sharefat" class="w-4 h-4 mr-1" />
           <span>{{ post.shares_count || 0 }}</span>
         </button>
-        <button @click="handleBookmark" class="ml-auto text-gray-400 hover:text-gray-600 bg-white">
+        <button @click="handleBookmark" class="ml-auto text-gray-400 hover:text-gray-600 dark:bg-gray-800 ">
           <svg-icon name="bookmarksimple" class="w-4 h-4" />
         </button>
       </div>
     </div>
-    <div v-if="showComments" class="border-t p-4">
-      <div v-if="commentsLoading" class="text-center py-4">
+    <div v-if="showComments" class="border-t p-4 dark:border-gray-700" >
+      <div v-if="commentsLoading" class="text-center py-4 ">
         Loading comments...
       </div>
-      <div v-else-if="comments.length === 0" class="text-center py-4">
+      <div v-else-if="comments.length === 0" class="text-center py-4 dark:text-white">
         No comments yet.
       </div>
-      <div v-else class="space-y-4">
-        <div v-for="comment in displayedComments" :key="comment.id" class="flex items-start space-x-3">
+      <div v-else class="space-y-4 ">
+        <div v-for="comment in displayedComments" :key="comment.id" class="flex items-start space-x-3 ">
           <div class="flex-shrink-0">
             <img v-if="comment.user && comment.user.avatar" :src="comment.user.avatar" :alt="comment.user.name"
               class="w-8 h-8 rounded-full">
@@ -60,7 +59,7 @@
               {{ getInitial(comment.user ? comment.user.name : 'Anonymous') }}
             </div>
           </div>
-          <div class="flex-grow bg-gray-100 rounded-lg p-3">
+          <div class="flex-grow bg-gray-100 rounded-lg p-3 ">
             <p class="font-semibold text-sm">{{ comment.user ? comment.user.name : 'Anonymous' }}</p>
             <p class="text-sm text-gray-700">{{ comment.content }}</p>
           </div>

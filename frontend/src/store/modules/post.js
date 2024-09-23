@@ -1,4 +1,3 @@
-// src/store/modules/posts.js
 
 import api from '../../services/api'
 

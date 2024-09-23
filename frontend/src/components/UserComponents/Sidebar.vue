@@ -1,18 +1,18 @@
 <template>
-  <div class="bg-white h-full flex flex-col transition-all duration-300 shadow-lg"
+  <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 h-full flex flex-col transition-all duration-300 shadow-lg"
     :class="{ 'w-64 md:w-72 lg:w-80': !isMinimized, 'w-14': isMinimized }">
     <div class="p-4 flex items-center justify-between">
       <div class="flex items-center">
         <img src="https://res.cloudinary.com/dgjynovaj/image/upload/v1725918172/Ellipse_11_bpzft6.svg"
           alt="MarocConnect" class="w-8 h-8 mr-2">
         <h1 v-if="!isMinimized"
-          class="text-base font-medium font-['Plus_Jakarta_Sans'] text-black tracking-[-0.01em] leading-[22px]">
+          class="text-base font-medium font-['Plus_Jakarta_Sans'] text-black tracking-[-0.01em] leading-[22px] dark:text-white">
           MarocConnect
         </h1>
       </div>
     </div>
     <div v-if="!isMinimized" class="px-8 mb-4">
-      <input type="text" placeholder="Search..." class="w-full p-2 rounded-full bg-gray-100">
+      <input type="text" placeholder="Search..." class="w-full p-2 rounded-full bg-gray-100 dark:bg-gray-700 dark:focus:ring-blue-400 dark:text-white">
     </div>
     <nav class="flex-1 overflow-y-auto">
       <SidebarItem v-for="item in menuItems" :key="item.text" :icon="item.icon" :text="item.text" :badge="item.badge"
@@ -22,13 +22,13 @@
       <div v-if="user" class="flex items-center justify-between">
         <div class="flex items-center">
           <router-link :to="{ name: 'UserProfile', params: { id: user.id } }" class="flex items-center no-underline text-gray-950">
-            <img :src="user.avatar" :alt="user.name" class="w-10 h-10 rounded-full mr-3">
+            <img :src="user.avatar" :alt="user.name" class="w-10 h-10 rounded-full mr-3 ">
             <div>
-              <p class="">{{ user.name }}</p>
+              <p class="dark:text-white">{{ user.name }}</p>
             </div>
           </router-link>
         </div>
-        <button @click="logout" class="text-red-500 hover:text-red-700 bg-white cursor-pointer">
+        <button @click="logout" class="text-red-500 hover:text-red-700 bg-white dark:bg-gray-800 cursor-pointer">
           <svg-icon name="logout" class="w-5 h-5" />
         </button>
       </div>

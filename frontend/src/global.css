@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
@@ -9,4 +12,64 @@ body {
 ::before,
 ::after {
   border-width: 0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+.dark * {
+  scrollbar-color: #4a5568 #2d3748;
+}
+@layer components {
+  .font-plus-jakarta-sans {
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  }
+  .font-lato {
+    font-family: Lato, ui-sans-serif, system-ui, sans-serif;
+  }
+  .font-open-sans {
+    font-family: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  }
+  .bg-t-bg-stroke-tbg-image-card {
+    background-image: url(/public/icons/Storke.svg);
+  }
+  .bg-t-bg-image-card {
+    background-image: url(https://res.cloudinary.com/dgjynovaj/image/upload/v1726956513/beautiful-view-biggest-mosque-casablanca-morocco-hassan-ii-mosque_g6d4td.jpg);
+  }
+  .bg-component- {
+    background-image: url(https://res.cloudinary.com/dgjynovaj/image/upload/v1726956494/koutoubia-mosque-night-shining-crescent-moon-marrakesh-marocco_kkfpbx.jpg);
+  }
 }

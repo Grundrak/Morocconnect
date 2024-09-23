@@ -1,93 +1,98 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <div class="text-center">
-        <img class="mx-auto h-12 w-auto"
-          src="https://res.cloudinary.com/dgjynovaj/image/upload/v1725918172/Ellipse_11_bpzft6.svg"
-          alt="MarocConnect" />
-        <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+  <div class="min-h-screen flex items-center justify-center bg-[#f5f8ff] px-4">
+    <main class="w-full max-w-[400px] p-6 flex flex-col items-center justify-center bg-white rounded-lg shadow-md">
+      <div class="mb-6 cursor-pointer" @click="goToLandingPage">
+        <SvgIcon name="logo" class="w-16 h-16" />
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
-        <div class="rounded-md shadow-sm space-y-4"> <!-- Changed to space-y-4 for spacing -->
-          <div>
-            <label for="email" class="">Email address</label>
-            <input id="email" name="email" type="email" autocomplete="email" required v-model="email"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Email address" />
-          </div>
-          <div>
-            <label for="password" class="">Password</label>
-            <input :type="visible ? 'text' : 'password'" id="password" name="password" autocomplete="current-password"
-              required v-model="password"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Password" />
+      <h1 class="text-2xl font-bold text-[#09090b] mb-6">Login to your Account</h1>
+      <form @submit.prevent="handleLogin" class="w-full">
+        <div class="mb-4">
+          <div class="relative w-[87%]">
+            <SvgIcon name="email" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              v-model="email"
+              type="email"
+              placeholder="Email"
+              class="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              required
+            />
           </div>
         </div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input id="remember-me" name="remember-me" type="checkbox" v-model="rememberMe"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-            <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
-          </div>
-
-          <div class="text-sm">
-            <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Forgot password?</a>
+        <div class="mb-4">
+          <div class="relative w-[80%]">
+            <SvgIcon name="lock" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Password"
+              class="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              required
+            />
+            <button
+              type="button"
+              @click="togglePasswordVisibility"
+              class="absolute left-[110%] top-1/2 transform -translate-y-1/2"
+            >
+              <SvgIcon :name="showPassword ? 'eye-off' : 'eye'" class="text-gray-400 w-5 h-5" />
+            </button>
           </div>
         </div>
-
-        <div>
-          <button type="submit"
-            class="group relative w-full flex justify-center py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            Sign in
-          </button>
+        <div class="flex items-center justify-between mb-4">
+          <label class="flex items-center">
+            <input v-model="rememberMe" type="checkbox" class="mr-2" />
+            <span class="text-sm text-gray-600">Remember me</span>
+          </label>
+          <a @click="forgotPassword" class="text-sm text-blue-500 hover:underline cursor-pointer">Forgot Password?</a>
         </div>
-        <div v-if="error" class="mt-2 text-red-600">{{ error }}</div>
+        <button
+          type="submit"
+          class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+        >
+          LOG IN
+        </button>
       </form>
-
-      <div class="text-center">
-        <p class="mt-2 text-sm text-gray-600">
-          Don't have an account?
-          <router-link to="/register" class="font-medium text-blue-600 hover:text-blue-500">
-            Sign up now
-          </router-link>
-        </p>
-      </div>
-    </div>
+      <p class="mt-4 text-sm text-gray-600">
+        Don't have an account?
+        <a @click="goToRegister" class="text-blue-500 hover:underline cursor-pointer">Create an account</a>
+      </p>
+      <p v-if="error" class="mt-4 text-sm text-red-500">{{ error }}</p>
+    </main>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-export default {
-  name: 'Login',
+import { defineComponent, ref } from "vue";
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import SvgIcon from '@/components/UserComponents/SvgIcon.vue';
+
+export default defineComponent({
+  name: "Login",
+  components: { SvgIcon },
   setup() {
-    const email = ref('')
-    const password = ref('')
-    const rememberMe = ref(false)
-    const visible = ref(false)
-    const router = useRouter()
-    const store = useStore()
-    const error = ref('')
+    const store = useStore();
+    const router = useRouter();
 
+    const email = ref('');
+    const password = ref('');
+    const rememberMe = ref(false);
+    const showPassword = ref(false);
+    const error = ref('');
 
+    const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value;
+    };
 
     const handleLogin = async () => {
       try {
-        console.log('Attempting login...');
         const success = await store.dispatch('auth/login', {
           email: email.value,
-          password: password.value
+          password: password.value,
+          remember: rememberMe.value
         });
         if (success) {
-          console.log('Login successful, token:');
-          console.log('Redirecting to home...');
-          await router.push({ name: 'Home' });
-          console.log('Redirection complete');
+          router.push({ name: 'Home' });
         } else {
-          console.error('Login failed');
           error.value = 'Invalid credentials. Please try again.';
         }
       } catch (err) {
@@ -96,14 +101,39 @@ export default {
       }
     };
 
+    const forgotPassword = () => {
+      // Implement forgot password functionality
+      console.log('Forgot password clicked');
+    };
+
+    const goToRegister = () => {
+      router.push({ name: 'Register' });
+    };
+
+    const goToLandingPage = () => {
+      router.push({ name: 'Landing' }); // Ensure you have a route named 'Landing' for your landing page
+    };
+
     return {
       email,
       password,
       rememberMe,
-      visible,
+      showPassword,
+      error,
+      togglePasswordVisibility,
       handleLogin,
-      error
-    }
+      forgotPassword,
+      goToRegister,
+      goToLandingPage
+    };
   }
-}
+});
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+</style>

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\FollowController;
@@ -72,6 +73,11 @@ Route::middleware(['cors'])->group(function () {
 
     // Admin routes
     Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () {
-        // ... (admin routes remain the same)
+        Route::apiResource('roles', RoleController::class);
+        Route::post('users/{user}/assign-role', [RoleController::class, 'assignRole']);
+        Route::get('admin/dashboard-data', [AdminController::class, 'dashboardData']);
+        Route::get('admin/users', [AdminController::class, 'users']);
+        Route::get('admin/posts', [AdminController::class, 'posts']);
+        Route::get('admin/comments', [AdminController::class, 'comments']);
     });
 });

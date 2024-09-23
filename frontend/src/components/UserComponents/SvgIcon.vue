@@ -1,6 +1,6 @@
-<!-- components/SvgIcon.vue -->
+
 <template>
-  <img :src="iconSrc" :alt="name" :class="classes" />
+  <img :src="iconSrc" :alt="name" :class="[classes, 'bg-transparent']" />
 </template>
 
 <script>

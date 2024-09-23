@@ -13,7 +13,7 @@
 <script>
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import PostCard from '@/components/PostCard.vue'
+import PostCard from '@/components/UserComponents/PostCard.vue'
 
 export default {
   name: 'HomePage',

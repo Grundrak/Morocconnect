@@ -1,4 +1,3 @@
-<!-- AppSidebarItem.vue -->
 <template>
   <div
     class="flex items-center p-3 rounded-full hover:bg-gray-10 cursor-pointer mb-2"

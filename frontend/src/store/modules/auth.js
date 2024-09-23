@@ -9,6 +9,7 @@ export default {
   mutations: {
     SET_USER(state, user) {
       state.user = user;
+      state.isAuthenticated = !!user;
     },
     SET_TOKEN(state, token) {
       if (token) {

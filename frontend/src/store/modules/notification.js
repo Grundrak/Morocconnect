@@ -1,4 +1,4 @@
-// src/store/modules/notification.js
+
 import api from "../../services/api";
 
 export default {

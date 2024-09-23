@@ -1,5 +1,3 @@
-// src/router.js
-
 import { createRouter, createWebHistory } from "vue-router";
 import LandingPage from "../pages/LandingPage.vue";
 import HomePage from "../pages/HomePage.vue";
@@ -7,17 +5,16 @@ import Login from "../pages/Login.vue";
 import Register from "../pages/Register.vue";
 import store from "../store/index";
 import UserProfil from "../pages/UserProfil.vue";
+import EditProfile from '../pages/EditProfile.vue';
+import AdminDashboard from '../pages/AdminDashboard.vue';
 
 const routes = [
   {
-    path: "/",
-    name: "Landing",
-    component: LandingPage,
-    meta: {
-      title: "Welcome to MarocConnect",
-      description: "Connect with friends and explore Morocco",
-    },
+    path: '/',
+    name: 'Landing',
+    component: LandingPage
   },
+
   {
     path: "/home",
     name: "Home",
@@ -25,12 +22,17 @@ const routes = [
     meta: {
       requiresAuth: true,
     },
-    
   },
   {
-    path: '/profile',
-    name: 'UserProfile',
+    path: '/profil/:id',
+    name: 'UserProfil',
     component: UserProfil
+  },
+  {
+    path: '/admin-dashboard',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
     path: "/login",

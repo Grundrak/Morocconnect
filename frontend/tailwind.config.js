@@ -1,8 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: ["./src/**/*.{js,jsx,ts,tsx,vue}"],
   theme: {
     extend: {
+      fontFamily: {
+        'plus-jakarta-sans': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'lato': ['Lato', 'sans-serif'],
+        'open-sans': ['"Open Sans"', 'sans-serif'],
+      },
       colors: {
         "gray-0-white": "#fff",
         "gray-20": "#e2e8f0",

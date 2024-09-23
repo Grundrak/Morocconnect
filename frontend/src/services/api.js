@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '../store'; // Import your Vuex store
+import store from '../store'; 
 
 const api = axios.create({
   baseURL: 'http://moroconect.test/api',

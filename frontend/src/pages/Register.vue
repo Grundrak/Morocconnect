@@ -1,140 +1,186 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <div class="text-center">
-        <img class="mx-auto h-12 w-auto"
-          src="https://res.cloudinary.com/dgjynovaj/image/upload/v1725918172/Ellipse_11_bpzft6.svg"
-          alt="MarocConnect" />
-        <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Create your account</h2>
+  <div class="min-h-screen flex items-center justify-center bg-[#f5f8ff] px-4">
+    <main class="w-full max-w-[400px] p-6 flex flex-col items-center justify-center bg-white rounded-lg shadow-md">
+      <div class="mb-6 cursor-pointer" @click="goToLandingPage">
+        <SvgIcon name="logo" class="w-16 h-16" />
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="handleRegister">
-        <div class="rounded-md shadow-sm space-y-4">
-          <div>
-            <label for="name" class="sr-only">Full name</label>
-            <input id="name" name="name" type="text" autocomplete="name" required v-model="name"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Full name" />
-          </div>
-          <div>
-            <label for="username" class="sr-only">Username</label>
-            <input id="username" name="username" type="text" required v-model="username"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Username" />
-          </div>
-          <div>
-            <label for="email" class="sr-only">Email address</label>
-            <input id="email" name="email" type="email" autocomplete="email" required v-model="email"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Email address" />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input :type="visible ? 'text' : 'password'" id="password" name="password" autocomplete="new-password"
-              required v-model="password"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Password" />
-          </div>
-          <div>
-            <label for="password_confirmation" class="sr-only">Confirm Password</label>
-            <input :type="visible ? 'text' : 'password'" id="password_confirmation" name="password_confirmation"
-              autocomplete="new-password" required v-model="passwordConfirmation"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Confirm Password" />
+      <h1 class="text-2xl font-bold text-[#09090b] mb-6">Create your account</h1>
+      <form @submit.prevent="handleRegister" class="w-full">
+        <div class="mb-4">
+          <div class="relative w-[87%]">
+            <SvgIcon name="user" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Username"
+              class="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              required
+            />
           </div>
         </div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input id="terms" name="terms" type="checkbox" required v-model="agreedToTerms"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-            <label for="terms" class="ml-2 block text-sm text-gray-900">
-              I agree to the <a href="#" class="text-blue-600 hover:text-blue-500">Terms and Conditions</a>
-            </label>
+        <div class="mb-4">
+          <div class="relative w-[87%]">
+            <SvgIcon name="email" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              v-model="email"
+              type="email"
+              placeholder="Email"
+              class="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              required
+            />
           </div>
         </div>
-
-        <div>
-          <button type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            Sign up
-          </button>
+        <div class="mb-4">
+          <div class="relative w-[80%]">
+            <SvgIcon name="lock" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Password"
+              class="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              required
+            />
+            <button
+              type="button"
+              @click="togglePasswordVisibility"
+              class="absolute left-[110%] top-1/2 transform -translate-y-1/2"
+            >
+              <SvgIcon :name="showPassword ? 'eye-off' : 'eye'" class="text-gray-400 w-5 h-5" />
+            </button>
+          </div>
         </div>
-
-        <div v-if="errors.general" class="mt-2 text-red-600">{{ errors.general }}</div>
-        <div v-for="(errorMessages, field) in errors" :key="field" class="mt-2 text-red-600">
-          <div v-for="message in errorMessages" :key="message">{{ message }}</div>
+        <div class="mb-4">
+          <div class="relative w-[80%]">
+            <SvgIcon name="lock" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              v-model="confirmPassword"
+              :type="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Confirm Password"
+              class="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              required
+            />
+            <button
+              type="button"
+              @click="toggleConfirmPasswordVisibility"
+              class="absolute left-[110%] top-1/2 transform -translate-y-1/2"
+            >
+              <SvgIcon :name="showConfirmPassword ? 'eye-off' : 'eye'" class="text-gray-400 w-5 h-5" />
+            </button>
+          </div>
         </div>
+        <div class="flex items-center mb-4">
+          <input v-model="acceptTerms" type="checkbox" id="terms" class="mr-2" required />
+          <label for="terms" class="text-sm text-gray-600">
+            Accept <span class="text-blue-500 cursor-pointer" @click="showTerms">terms and conditions</span>
+          </label>
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+        >
+          Register
+        </button>
       </form>
-
-      <div class="text-center">
-        <p class="mt-2 text-sm text-gray-600">
-          Already have an account?
-          <router-link to="/login" class="font-medium text-blue-600 hover:text-blue-500">
-            Sign in now
-          </router-link>
-        </p>
-      </div>
-    </div>
+      <p class="mt-4 text-sm text-gray-600">
+        You have an account?
+        <a @click="goToLogin" class="text-blue-500 hover:underline cursor-pointer">Login now</a>
+      </p>
+      <p v-if="error" class="mt-4 text-sm text-red-500">{{ error }}</p>
+    </main>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { defineComponent, ref } from "vue";
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import SvgIcon from '@/components/UserComponents/SvgIcon.vue';
 
-export default {
-  name: 'Register',
+export default defineComponent({
+  name: "Register",
+  components: { SvgIcon },
   setup() {
-    const name = ref('')
-    const email = ref('')
-    const password = ref('')
-    const passwordConfirmation = ref('')
-    const agreedToTerms = ref(false)
-    const visible = ref(false)
-    const router = useRouter()
-    const store = useStore()
-    const errors = ref({})
+    const store = useStore();
+    const router = useRouter();
+
+    const username = ref('');
+    const email = ref('');
+    const password = ref('');
+    const confirmPassword = ref('');
+    const acceptTerms = ref(false);
+    const showPassword = ref(false);
+    const showConfirmPassword = ref(false);
+    const error = ref('');
+
+    const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value;
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+      showConfirmPassword.value = !showConfirmPassword.value;
+    };
 
     const handleRegister = async () => {
-      errors.value = {}
-      if (!agreedToTerms.value) {
-        errors.value = { general: 'You must agree to the terms and conditions.' }
-        return
-      }
-      try {
-        console.log('Attempting registration...');
-        const result = await store.dispatch('auth/register', {
-          name: name.value,
-          username: username.value,
-          email: email.value,
-          password: password.value,
-          password_confirmation: passwordConfirmation.value
-        });
-        console.log('Registration result:', result);
-        if (result.success) {
-          console.log('Registration successful, redirecting...');
-          router.push('/home');
-        } else {
-          console.error('Registration failed', result.errors);
-          errors.value = result.errors;
-        }
-      } catch (err) {
-        console.error('Registration error:', err);
-        errors.value = { general: err.message || 'An unexpected error occurred' };
-      }
+  if (password.value !== confirmPassword.value) {
+    error.value = 'Passwords do not match';
+    return;
+  }
+
+  try {
+    const success = await store.dispatch('auth/register', {
+      username: username.value,
+      email: email.value,
+      password: password.value,
+      password_confirmation: confirmPassword.value, // Make sure to include this
+    });
+    if (success) {
+      router.push({ name: 'Home' });
+    } else {
+      error.value = 'Registration failed. Please try again.';
     }
+  } catch (err) {
+    console.error('Registration error:', err.response?.data);
+    error.value = err.response?.data?.message || 'An error occurred during registration';
+  }
+};
+
+    const showTerms = () => {
+      // Implement show terms functionality
+      console.log('Show terms and conditions');
+    };
+
+    const goToLogin = () => {
+      router.push({ name: 'Login' });
+    };
+
+    const goToLandingPage = () => {
+      router.push({ name: 'Landing' });
+    };
 
     return {
-      name,
+      username,
       email,
       password,
-      passwordConfirmation,
-      agreedToTerms,
-      visible,
+      confirmPassword,
+      acceptTerms,
+      showPassword,
+      showConfirmPassword,
+      error,
+      togglePasswordVisibility,
+      toggleConfirmPasswordVisibility,
       handleRegister,
-      errors
-    }
+      showTerms,
+      goToLogin,
+      goToLandingPage
+    };
   }
-}
+});
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+</style>

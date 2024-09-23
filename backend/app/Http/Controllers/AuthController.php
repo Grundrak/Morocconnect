@@ -78,11 +78,27 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
+        // Manually fetch roles using the Role model
+        $roles = \App\Models\Role::whereHas('users', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->pluck('name')->toArray();
+
+        // Create a custom user array with roles
+        $userData = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'username' => $user->username,
+            // Add any other user fields you need
+            'roles' => $roles
+        ];
+
         return response()->json([
-            'user' => $user,
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
+            'user' => $userData
         ]);
     }
     public function logout()

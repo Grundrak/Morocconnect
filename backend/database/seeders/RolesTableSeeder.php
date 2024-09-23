@@ -1,17 +1,12 @@
 <?php
-
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Role;
 
-class RoleSeeder extends Seeder
+class RolesTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
         Role::create(['name' => 'Admin', 'slug' => 'admin']);
         Role::create(['name' => 'Moderator', 'slug' => 'moderator']);

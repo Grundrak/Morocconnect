@@ -16,6 +16,8 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
+    protected $with = ['roles'];
+
     protected $fillable = [
         'username',
         'email',
@@ -64,7 +66,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Role::class);
     }
-
+    public function hasAnyRole($roles)
+    {
+        return $this->roles()->whereIn('name', (array) $roles)->exists();
+    }
     public function badges()
     {
         return $this->belongsToMany(Badge::class)->withTimestamps();

@@ -3,6 +3,8 @@ import posts from './modules/post'
 import auth from './modules/auth'
 import notification from './modules/notification'
 import user from './modules/user'
+import admin from './modules/admin'
+import search from './modules/search'
 
 console.log('Auth module:', auth)
 console.log('Auth actions:', auth.actions)
@@ -13,6 +15,8 @@ const store = createStore({
     auth,
     notification,
     user,
+    admin,
+    search
   }
 })
 

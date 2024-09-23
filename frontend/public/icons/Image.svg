@@ -1,0 +1,10 @@
+<svg width="100%" height="100%" style="overflow:visible;" preserveAspectRatio="none" viewBox="0 0 436.38 610.93" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M0.68576 218.986C0.68576 98.4842 98.372 0.797974 218.874 0.797974V0.797974C339.376 0.797974 437.063 98.4843 437.063 218.986V611.726H0.68576V218.986Z" fill="#D9D9D9"/>
+<path d="M0.68576 218.986C0.68576 98.4842 98.372 0.797974 218.874 0.797974V0.797974C339.376 0.797974 437.063 98.4843 437.063 218.986V611.726H0.68576V218.986Z" fill="url(#pattern0_2085_1548)"/>
+<defs>
+<pattern id="pattern0_2085_1548" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_2085_1548" transform="matrix(0.000607375 0 0 0.000433839 -0.306958 -0.00194043)"/>
+</pattern>
+<image id="image0_2085_1548" width="4096" height="2305" xlink:href="/assets/bg-image.png"/>
+</defs>
+</svg>

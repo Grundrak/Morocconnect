@@ -1,4 +1,3 @@
-<!-- src/components/AddPostForm.vue -->
 <template>
   <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
     <h2 class="text-2xl font-bold mb-4">Add New Post</h2>
