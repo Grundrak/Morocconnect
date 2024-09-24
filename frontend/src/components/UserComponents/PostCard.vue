@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center">
           <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
-            <img v-if="post.user && post.user.avatar" :src="post.user.avatar" :alt="post.user.name"
+            <img v-if="post.user && post.user.avatar" :src="getAvatarUrl(post.user.avatar)" :alt="post.user.name"
               class="w-full h-full object-cover">
             <div v-else class="w-full h-full bg-blue-500 flex items-center justify-center text-white text-xl font-bold">
               {{ getInitial(post.user ? post.user.name : 'Anonymous') }}
@@ -15,7 +15,8 @@
             <p v-if="post.user && post.user.username" class="text-sm text-gray-500 m-0">{{ post.user.username }}</p>
           </div>
         </div>
-        <button @click="handleMoreOptions" class="p-1 rounded-full focus:outline-none focus:ring-2 bg-white dark:bg-gray-800">
+        <button @click="handleMoreOptions"
+          class="p-1 rounded-full focus:outline-none focus:ring-2 bg-white dark:bg-gray-800">
           <svg-icon name="dotsthreeoutlinevertical" class="h-5 w-5" />
         </button>
       </div>
@@ -42,26 +43,27 @@
         </button>
       </div>
     </div>
-    <div v-if="showComments" class="border-t p-4 dark:border-gray-700" >
+    <div v-if="showComments" class="border-t p-4 dark:border-gray-700">
       <div v-if="commentsLoading" class="text-center py-4 ">
         Loading comments...
       </div>
       <div v-else-if="comments.length === 0" class="text-center py-4 dark:text-white">
         No comments yet.
       </div>
-      <div v-else class="space-y-4 ">
-        <div v-for="comment in displayedComments" :key="comment.id" class="flex items-start space-x-3 ">
+      <div v-else class="space-y-4">
+        <div v-for="comment in displayedComments" :key="comment.id" class="flex items-start space-x-3">
           <div class="flex-shrink-0">
-            <img v-if="comment.user && comment.user.avatar" :src="comment.user.avatar" :alt="comment.user.name"
-              class="w-8 h-8 rounded-full">
+            <img v-if="comment.user && comment.user.avatar" :src="getAvatarUrl(comment.user.avatar)"
+              :alt="comment.user.name" class="w-8 h-8 rounded-full">
             <div v-else
               class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
               {{ getInitial(comment.user ? comment.user.name : 'Anonymous') }}
             </div>
           </div>
-          <div class="flex-grow bg-gray-100 rounded-lg p-3 ">
+          <div class="flex-grow bg-gray-100 rounded-lg p-3">
             <p class="font-semibold text-sm">{{ comment.user ? comment.user.name : 'Anonymous' }}</p>
             <p class="text-sm text-gray-700">{{ comment.content }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ formatCommentDate(comment.created_at) }}</p>
           </div>
         </div>
       </div>
@@ -72,7 +74,7 @@
       </div>
       <div class="flex items-center mt-4">
         <div class="w-8 h-8 rounded-full overflow-hidden mr-3">
-          <img v-if="currentUser && currentUser.avatar" :src="currentUser.avatar" :alt="currentUser.name"
+          <img v-if="currentUser && currentUser.avatar" :src="getAvatarUrl(currentUser.avatar)" :alt="currentUser.name"
             class="w-full h-full object-cover">
           <div v-else class="w-full h-full bg-purple-500 flex items-center justify-center text-white text-sm font-bold">
             {{ getInitial(currentUser ? currentUser.name : 'Anonymous') }}
@@ -81,7 +83,7 @@
         <input v-model="newComment" type="text" placeholder="Write your comment..."
           class="flex-1 p-2 rounded-full bg-gray-100 text-sm">
         <button @click="submitComment"
-          class="ml-2 p-2 rounded-full  text-white hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300">
+          class="ml-2 p-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
           <svg-icon name="share" class="w-5 h-5" />
         </button>
       </div>
@@ -93,6 +95,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import SvgIcon from './SvgIcon.vue'
+import { formatDistanceToNow } from 'date-fns'
 
 export default {
   name: 'PostCard',
@@ -107,8 +110,9 @@ export default {
     const comments = ref([])
     const commentsLoading = ref(false)
     const showAllComments = ref(false)
+    const defaultAvatar = 'https://res.cloudinary.com/dgjynovaj/image/upload/v1727130788/defaultAvatar_lszkxq.svg' 
 
-    const currentUser = computed(() => store.getters['auth/user'] || {})
+    const currentUser = computed(() => store.getters['auth/currentUser'])
     const postLikes = computed(() => props.post.likes_count || props.post.likes || 0)
     const isLiked = computed(() => props.post.is_liked || false)
 
@@ -120,25 +124,34 @@ export default {
       return name && typeof name === 'string' ? name.charAt(0).toUpperCase() : '?'
     }
 
+    const getAvatarUrl = (avatar) => {
+      if (!avatar) return defaultAvatar;
+      if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+        return avatar;
+      }
+      return `${import.meta.env.VITE_API_URL}/storage/${avatar}`;
+    }
+
     const getImageUrl = (imagePath) => {
-      // Ensure the image path is correctly constructed
-      if (imagePath.startsWith('http')) {
+      if (!imagePath) return '';
+      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
         return imagePath;
       }
-      return `http://moroconect.test/storage/${imagePath}`;
+      return `${import.meta.env.VITE_API_URL}/storage/${imagePath}`;
+    }
+
+    const formatCommentDate = (date) => {
+      return formatDistanceToNow(new Date(date), { addSuffix: true })
     }
 
     const toggleLike = async () => {
-      console.log('Before toggle:', props.post.likes_count, props.post.is_liked);
       try {
         const action = isLiked.value ? 'posts/unlikePost' : 'posts/likePost'
         const response = await store.dispatch(action, props.post.id)
-        console.log('Response:', response);
         props.post.likes_count = response.likes_count || response.likes;
         props.post.is_liked = response.is_liked;
       } catch (error) {
         if (error.response && error.response.status === 400) {
-          // Handle already liked/unliked case
           const data = error.response.data;
           props.post.likes_count = data.likes;
           props.post.is_liked = data.is_liked;
@@ -146,7 +159,6 @@ export default {
           console.error('Error toggling like:', error)
         }
       }
-      console.log('After toggle:', props.post.likes_count, props.post.is_liked);
     }
 
     const toggleComments = async () => {
@@ -183,7 +195,8 @@ export default {
             comments.value = [
               {
                 ...comment,
-                user: currentUser.value
+                user: currentUser.value,
+                created_at: new Date().toISOString()
               },
               ...comments.value
             ]
@@ -210,9 +223,25 @@ export default {
     })
 
     return {
-      newComment, postLikes, isLiked, currentUser, showComments, comments, commentsLoading,
-      getInitial, toggleLike, toggleComments, submitComment, handleShare, handleBookmark,
-      handleMoreOptions, displayedComments, showAllComments, getImageUrl
+      newComment,
+      postLikes,
+      isLiked,
+      currentUser,
+      showComments,
+      comments,
+      commentsLoading,
+      getInitial,
+      toggleLike,
+      toggleComments,
+      submitComment,
+      handleShare,
+      handleBookmark,
+      handleMoreOptions,
+      displayedComments,
+      showAllComments,
+      getAvatarUrl,
+      getImageUrl,
+      formatCommentDate
     }
   }
 }

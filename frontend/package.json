@@ -15,6 +15,7 @@
     "@vueuse/core": "^11.0.3",
     "chart.js": "^4.4.4",
     "csstype": "^3.1.2",
+    "date-fns": "^4.1.0",
     "lodash": "^4.17.21",
     "vue": "^3.2.47",
     "vue-axios": "^3.5.2",

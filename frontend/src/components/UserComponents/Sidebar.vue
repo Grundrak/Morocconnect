@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 h-full flex flex-col transition-all duration-300 shadow-lg"
+  <div
+    class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 h-full flex flex-col transition-all duration-300 shadow-lg"
     :class="{ 'w-64 md:w-72 lg:w-80': !isMinimized, 'w-14': isMinimized }">
     <div class="p-4 flex items-center justify-between">
       <div class="flex items-center">
@@ -12,29 +13,14 @@
       </div>
     </div>
     <div v-if="!isMinimized" class="px-8 mb-4">
-      <input type="text" placeholder="Search..." class="w-full p-2 rounded-full bg-gray-100 dark:bg-gray-700 dark:focus:ring-blue-400 dark:text-white">
+      <input type="text" placeholder="Search..."
+        class="w-full p-2 rounded-full bg-gray-100 dark:bg-gray-700 dark:focus:ring-blue-400 dark:text-white">
     </div>
     <nav class="flex-1 overflow-y-auto">
       <SidebarItem v-for="item in menuItems" :key="item.text" :icon="item.icon" :text="item.text" :badge="item.badge"
         :to="item.route" :isMinimized="isMinimized || $winWidth < 768" />
     </nav>
     <div class="p-4 border-t" v-if="!isMinimized">
-      <div v-if="user" class="flex items-center justify-between">
-        <div class="flex items-center">
-          <router-link :to="{ name: 'UserProfile', params: { id: user.id } }" class="flex items-center no-underline text-gray-950">
-            <img :src="user.avatar" :alt="user.name" class="w-10 h-10 rounded-full mr-3 ">
-            <div>
-              <p class="dark:text-white">{{ user.name }}</p>
-            </div>
-          </router-link>
-        </div>
-        <button @click="logout" class="text-red-500 hover:text-red-700 bg-white dark:bg-gray-800 cursor-pointer">
-          <svg-icon name="logout" class="w-5 h-5" />
-        </button>
-      </div>
-      <div v-else class="text-center text-gray-500">
-        Loading user data...
-      </div>
     </div>
   </div>
 </template>

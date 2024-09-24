@@ -1,170 +1,200 @@
 <template>
-  <div class="bg-gray-100 min-h-screen">
-    <!-- Loading State -->
-    <div v-if="isLoading" class="flex justify-center items-center h-screen">
-      <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+  <div>
+    <Navbar />
+    <div v-if="isLoading" class="text-center py-4">
+      Loading...
     </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="flex justify-center items-center h-screen">
-      <div class="text-red-500 text-xl">{{ error }}</div>
+    <div v-else-if="error" class="text-center py-4 text-red-500">
+      {{ error }}
     </div>
+    <div v-else-if="user" class="bg-gray-100 min-h-screen">
+      <!-- Cover Photo -->
+      <div class="h-64 bg-gradient-to-r from-blue-600 via-purple-500 to-purple-800"></div>
 
-    <!-- User Profile -->
-    <div v-else-if="user" class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-        <!-- Cover Photo -->
-        <div class="h-60 w-full bg-cover bg-center" :style="coverPhotoStyle"></div>
-        
-        <div class="px-4 py-5 sm:px-6 relative">
-          <!-- Profile Photo -->
-          <img 
-            :src="user.avatar || defaultAvatar" 
-            :alt="user.name"
-            class="w-32 h-32 rounded-full border-4 border-white absolute -mt-20 shadow-lg"
-          >
-          
-          <div class="ml-40">
-            <h3 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-              {{ user.name }}
-            </h3>
-            <p class="mt-1 max-w-2xl text-sm text-gray-500">@{{ user.username }}</p>
+      <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg -mt-20 p-8">
+        <div class="flex justify-between items-start mb-8">
+          <div class="flex items-center">
+            <img :src="avatarUrl" alt="User Avatar" class="w-32 h-32 rounded-full mr-6 border-4 border-white">
+            <div>
+              <h3 class="text-3xl font-bold">{{ user.name }}</h3>
+              <p class="text-gray-600">@{{ user.username }}</p>
+              <p class="text-gray-600">{{ user.email }}</p>
+              <p class="text-gray-600">From: {{ user.location }}</p>
+              <p class="text-gray-600">Bio: {{ user.bio }}</p>
+              <p class="text-gray-600">Birthday: {{ formatDate(user.birthday) }}</p>
+            </div>
           </div>
-          
-          <!-- Follow Button (if not current user) -->
-          <button 
-            v-if="!isCurrentUser"
-            @click="toggleFollow" 
-            class="absolute top-5 right-5 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full"
-          >
-            {{ isFollowing ? 'Unfollow' : 'Follow' }}
-          </button>
-        </div>
-        
-        <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl class="sm:divide-y sm:divide-gray-200">
-            <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt class="text-sm font-medium text-gray-500">Bio</dt>
-              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.bio || 'No bio provided' }}</dd>
+          <div class="flex flex-col items-end">
+            <div class="flex mb-2">
+              <p class="mr-4"><strong>{{ user.followers_count }}</strong> Followers</p>
+              <p><strong>{{ user.following_count }}</strong> Following</p>
             </div>
-            <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt class="text-sm font-medium text-gray-500">Location</dt>
-              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.location || 'Not specified' }}</dd>
+            <button v-if="isCurrentUser" @click="showEditForm = true"
+              class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600">
+              Edit Profile
+            </button>
+            <button v-else @click="toggleFollow"
+              class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600">
+              {{ isFollowing ? 'Unfollow' : 'Follow' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="text-lg font-semibold mb-2">Badges</h4>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="badge in user.badges" :key="badge.id"
+                class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm">
+                {{ badge.name }}
+              </span>
             </div>
-            <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt class="text-sm font-medium text-gray-500">Website</dt>
-              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <a v-if="user.website" :href="user.website" target="_blank" class="text-blue-500 hover:underline">{{ user.website }}</a>
-                <span v-else>Not provided</span>
-              </dd>
-            </div>
-          </dl>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="text-lg font-semibold mb-2">Recent Posts</h4>
+            <ul class="list-disc list-inside">
+              <li v-for="post in user.recent_posts" :key="post.id" class="truncate">
+                {{ post.content }}
+              </li>
+            </ul>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="text-lg font-semibold mb-2">Recent Comments</h4>
+            <ul class="list-disc list-inside">
+              <li v-for="comment in user.recent_comments" :key="comment.id" class="truncate">
+                {{ comment.content }}
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      
-      <!-- Stats -->
-      <div class="mt-6 grid grid-cols-3 gap-6 text-center">
-        <div class="bg-white p-4 rounded-lg shadow">
-          <p class="text-2xl font-bold text-gray-900">{{ user.posts_count || 0 }}</p>
-          <p class="text-base font-medium text-gray-500">Posts</p>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-          <p class="text-2xl font-bold text-gray-900">{{ user.followers_count || 0 }}</p>
-          <p class="text-base font-medium text-gray-500">Followers</p>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-          <p class="text-2xl font-bold text-gray-900">{{ user.following_count || 0 }}</p>
-          <p class="text-base font-medium text-gray-500">Following</p>
-        </div>
-      </div>
-      
-      <!-- User's Posts -->
-      <div class="mt-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Recent Posts</h2>
-        <!-- Add your PostCard component or list of posts here -->
       </div>
     </div>
+    <EditProfile v-if="showEditForm" :user="user" @close="showEditForm = false" @update="updateProfile" />
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
-import { onUnmounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+import EditProfile from './EditProfile.vue'
+import Navbar from '../components/AdminComponents/navbar.vue';
 
 export default {
   name: 'UserProfile',
+  components: { EditProfile, Navbar },
   setup() {
-    const store = useStore();
-    const route = useRoute();
+    const store = useStore()
+    const router = useRouter()
+    const route = useRoute()
+    const user = ref(null)
+    const currentUser = computed(() => store.getters['auth/currentUser'])
+    const defaultAvatar = 'https://res.cloudinary.com/dgjynovaj/image/upload/v1727130788/defaultAvatar_lszkxq.svg'
+    const isLoading = ref(true)
+    const error = ref(null)
+    const showEditForm = ref(false)
+    const isFollowing = ref(false)
 
-    const user = computed(() => store.getters['user/profileUser']);
-    const currentUser = computed(() => store.getters['auth/currentUser']);
-    const isLoading = computed(() => store.getters['user/isLoading']);
-    const error = ref(null);
 
-    const isCurrentUser = computed(() => user.value?.id === currentUser.value?.id);
-    const isFollowing = ref(false);
+    const isCurrentUser = computed(() => user.value?.id === currentUser.value?.id)
 
-    const defaultAvatar = '/path/to/default/avatar.png';
+    const avatarUrl = computed(() => {
+      if (!user.value || !user.value.avatar) return defaultAvatar;
+      
+      // Check if it's a full URL
+      if (user.value.avatar.startsWith('http://') || user.value.avatar.startsWith('https://')) {
+        return user.value.avatar;
+      }
+      
+      // If it's a relative path, prepend the backend URL
+      if (user.value.avatar.startsWith('avatars/')) {
+        return `${import.meta.env.VITE_API_URL}/storage/${user.value.avatar}`;
+      }
+      
+      // If it doesn't match any of the above, return the default avatar
+      return defaultAvatar;
+    });
 
-    const coverPhotoStyle = computed(() => ({
-      backgroundImage: user.value?.cover_photo 
-        ? `url(${user.value.cover_photo})` 
-        : 'url(/path/to/default/cover.jpg)'
-    }));
+
+    const fetchCurrentUser = async () => {
+      try {
+        await store.dispatch('auth/fetchUser')
+      } catch (err) {
+        console.error('Error fetching current user:', err)
+        error.value = 'Failed to load current user data.'
+      }
+    }
 
     const fetchUserProfile = async (userId) => {
-      if (userId) {
-        try {
-          await store.dispatch('user/fetchUserProfile', userId);
-          isFollowing.value = user.value?.is_followed_by_current_user || false;
-        } catch (err) {
-          console.error('Error fetching user profile:', err);
-          error.value = 'Failed to load user profile';
-        }
-      } else {
-        error.value = 'User ID is missing';
+      isLoading.value = true
+      error.value = null
+      try {
+        const userData = await store.dispatch('user/fetchUserProfile', userId)
+        user.value = userData
+        isFollowing.value = userData?.is_followed_by_current_user || false
+      } catch (err) {
+        console.error('Error fetching user profile:', err)
+        error.value = 'Failed to load user profile. Please try again.'
+      } finally {
+        isLoading.value = false
       }
-    };
-
+    }
     const toggleFollow = async () => {
       try {
-        const action = isFollowing.value ? 'user/unfollowUser' : 'user/followUser';
-        await store.dispatch(action, user.value.id);
-        isFollowing.value = !isFollowing.value;
-        if (user.value) {
-          user.value.followers_count += isFollowing.value ? 1 : -1;
-        }
-      } catch (err) {
-        console.error('Error toggling follow:', err);
-        // You might want to show an error message to the user here
+        const action = isFollowing.value ? 'user/unfollowUser' : 'user/followUser'
+        await store.dispatch(action, user.value.id)
+        isFollowing.value = !isFollowing.value
+        await fetchUserProfile(user.value.id)
+      } catch (error) {
+        console.error('Error toggling follow:', error)
       }
-    };
+    }
 
-    onMounted(() => {
-      fetchUserProfile(route.params.id);
-    });
+    const updateProfile = async () => {
+      await fetchUserProfile(user.value.id)
+      showEditForm.value = false
+    }
 
-    watch(() => route.params.id, (newId) => {
-      fetchUserProfile(newId);
-    });
+    const formatDate = (dateString) => {
+      if (!dateString) return 'Not specified'
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    }
+
+    onMounted(async () => {
+      await fetchCurrentUser()
+      if (route.params.id) {
+        await fetchUserProfile(route.params.id)
+      }
+    })
+
+    watch(() => route.params.id, async (newId) => {
+      if (newId) {
+        await fetchUserProfile(newId)
+      }
+    })
 
     return {
       user,
-      isLoading,
-      error,
       isCurrentUser,
       isFollowing,
       defaultAvatar,
-      coverPhotoStyle,
-      toggleFollow
-    };
+      isLoading,
+      error,
+      showEditForm,
+      toggleFollow,
+      updateProfile,
+      avatarUrl,
+      formatDate
+    }
   }
-};
+}
 </script>
 
 <style scoped>
-/* Add any component-specific styles here */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.bg-white {
+  font-family: 'Inter', sans-serif;
+}
 </style>

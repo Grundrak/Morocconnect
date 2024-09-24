@@ -6,8 +6,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -59,7 +60,20 @@ class AuthController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        $user->avatar = $request->avatar;
+        // Remove the "data:image/png;base64," part
+        $avatar = preg_replace('/^data:image\/\w+;base64,/', '', $request->avatar);
+
+        // Decode the base64 string
+        $avatar = base64_decode($avatar);
+
+        // Generate a unique filename
+        $filename = 'avatar_' . time() . '.png';
+
+        // Save the file (make sure the storage/app/public/avatars directory exists)
+        Storage::disk('public')->put('avatars/' . $filename, $avatar);
+
+        // Update user's avatar in the database
+        $user->avatar = 'avatars/' . $filename;
         $user->save();
 
         return response()->json($user);

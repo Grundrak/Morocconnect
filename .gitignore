@@ -1,0 +1,56 @@
+# Ignore Docker files
+Dockerfile
+docker-compose.yml
+
+# Ignore .env files which might contain sensitive information
+.env
+.env.*
+!.env.example
+
+# Ignore vendor directories
+/vendor
+/node_modules
+
+# Ignore logs and databases
+*.log
+*.sqlite
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Ignore packaged files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Ignore Laravel specific files
+/public/hot
+/public/storage
+/storage/*.key
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+
+# Ignore Vue/Node specific files
+npm-debug.log
+yarn-error.log

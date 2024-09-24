@@ -29,7 +29,7 @@
       user: Object
     },
     setup() {
-      const defaultAvatar = '/path/to/default/avatar.png'
+      const defaultAvatar = 'https://res.cloudinary.com/dgjynovaj/image/upload/v1727130788/defaultAvatar_lszkxq.svg'
   
       return {
         defaultAvatar

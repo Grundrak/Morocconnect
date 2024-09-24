@@ -104,8 +104,8 @@ export default {
       }, 200)
     }
 
-    const goToUserProfile = (userId) => {
-      router.push({ name: 'UserProfile', params: { id: userId } })
+    const goToUserProfil = (userId) => {
+      router.push({ name: 'UserProfil', params: { id: userId } })
       showDropdown.value = false
     }
 
@@ -145,7 +145,7 @@ export default {
       searchResults,
       isSearching,
       error,
-      goToUserProfile,
+      goToUserProfil,
       goToPost,
       goToComment
     }
