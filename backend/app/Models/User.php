@@ -64,7 +64,8 @@ class User extends Authenticatable implements JWTSubject
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')
+                    ->withTimestamps();
     }
     public function hasAnyRole($roles)
     {
@@ -77,7 +78,9 @@ class User extends Authenticatable implements JWTSubject
 
     public function hasRole($role)
     {
-        return $this->roles()->where('name', $role)->exists();
+        return $this->roles()
+                    ->where('roles.slug', $role)
+                    ->exists();
     }
 
     public function awardBadge(Badge $badge)

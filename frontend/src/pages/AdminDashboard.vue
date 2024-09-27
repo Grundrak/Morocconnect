@@ -6,7 +6,7 @@
 
     <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar -->
-      <div class="w-64 bg-[#3b5e81] text-white">
+      <div class="w-64 bg-[#3b5e81] text-white cursor-pointer">
         <div class="p-4">
           <nav>
             <a @click="activeTab = 'home'"

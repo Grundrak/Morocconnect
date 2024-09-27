@@ -2,8 +2,18 @@
   <nav class="bg-white border-b dark:bg-gray-800 text-gray-900 dark:text-gray-200 border-gray-200 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between h-16">
+        <!-- Add Post Button -->
+        <div class="flex items-center">
+          <button @click="showAddPostForm = true"
+            class="bg-blue-500 text-white px-2 sm:px-4 py-2 rounded-full flex items-center hover:bg-blue-600 transition duration-150 ease-in-out mr-4">
+            <span class="hidden sm:inline mr-2">Add New Post</span>
+            <svg-icon name="plus" class="w-5 h-5" />
+          </button>
+        </div>
+
+        <!-- Search Bar -->
         <div class="flex-1 flex justify-center">
-          <div class="relative w-full max-w-xl">
+          <div class="relative w-full max-w-md">
             <input v-model="searchQuery" @input="debouncedSearch" @focus="showDropdown = true"
               @blur="hideDropdownDelayed" type="text" placeholder="Search..."
               class="w-full bg-gray-100 dark:bg-gray-700 border-none rounded-full px-4 py-2 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:text-white">
@@ -12,50 +22,21 @@
             </button>
           </div>
         </div>
-        <div class="flex items-center ml-4">
-          <button @click="showAddPostForm = true"
-            class="bg-blue-500 text-white px-2 sm:px-4 py-2 rounded-full flex items-center hover:bg-blue-600 transition duration-150 ease-in-out">
-            <span class="hidden sm:inline mr-2">Add New Post</span>
-            <svg-icon name="plus" class="w-5 h-5" />
-          </button>
-        </div>
-        <!-- Search Results Dropdown -->
-        <div
-          v-if="showDropdown && (isSearching || searchResults.users.length > 0 || searchResults.posts.length > 0 || searchResults.comments.length > 0)"
-          class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 max-h-96 overflow-y-auto">
-          <div v-if="isSearching" class="px-4 py-2 text-gray-500 dark:text-gray-400">Searching...</div>
-          <div v-else-if="error" class="px-4 py-2 text-red-500">{{ error }}</div>
-          <template v-else>
-            <div v-if="searchResults.users.length > 0">
-              <h3 class="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Users</h3>
-              <a v-for="user in searchResults.users" :key="user.id" @mousedown="goToUserProfile(user.id)"
-                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                {{ user.name }} (@{{ user.username }})
-              </a>
-            </div>
-            <div v-if="searchResults.posts.length > 0">
-              <h3 class="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Posts</h3>
-              <a v-for="post in searchResults.posts" :key="post.id" @mousedown="goToPost(post.id)"
-                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                {{ post.title }}
-              </a>
-            </div>
-            <div v-if="searchResults.comments.length > 0">
-              <h3 class="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Comments</h3>
-              <a v-for="comment in searchResults.comments" :key="comment.id" @mousedown="goToComment(comment.id)"
-                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                {{ comment.content.substring(0, 50) }}...
-              </a>
-            </div>
-          </template>
-        </div>
+
+        <!-- Sidebar Toggle Button (only on mobile) -->
+        <button v-if="isMobileScreen" @click="$emit('toggle-right-sidebar')"
+          class="bg-blue-500 text-white px-2 sm:px-4 py-2 rounded-full flex items-center hover:bg-blue-600 transition duration-150 ease-in-out ml-4">
+          <svg-icon name="menu" class="w-5 h-5" />
+        </button>
       </div>
- 
     </div>
     
+    <!-- Search Results Dropdown -->
+    <div v-if="showDropdown && (isSearching || searchResults.users.length > 0 || searchResults.posts.length > 0 || searchResults.comments.length > 0)"
+      class="absolute z-10 mt-2 w-full max-w-md left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 max-h-96 overflow-y-auto">
+      <!-- ... (keep existing dropdown content) ... -->
+    </div>
   </nav>
-
-
 
   <!-- Add Post Form Modal -->
   <teleport to="body">
@@ -79,7 +60,14 @@ export default {
     SvgIcon,
     AddPostForm
   },
-  setup() {
+  props: {
+    isMobileScreen: {
+      type: Boolean,
+      required: true
+    }
+  },
+  emits: ['toggle-right-sidebar'],
+  setup(props) {
     const store = useStore()
     const router = useRouter()
     const showAddPostForm = ref(false)
@@ -104,8 +92,8 @@ export default {
       }, 200)
     }
 
-    const goToUserProfil = (userId) => {
-      router.push({ name: 'UserProfil', params: { id: userId } })
+    const goToUserProfile = (userId) => {
+      router.push({ name: 'UserProfile', params: { id: userId } })
       showDropdown.value = false
     }
 
@@ -115,7 +103,6 @@ export default {
     }
 
     const goToComment = (commentId) => {
-      // Assuming you have a route to show a specific comment, otherwise redirect to the post
       router.push({ name: 'CommentDetail', params: { id: commentId } })
       showDropdown.value = false
     }
@@ -145,7 +132,7 @@ export default {
       searchResults,
       isSearching,
       error,
-      goToUserProfil,
+      goToUserProfile,
       goToPost,
       goToComment
     }

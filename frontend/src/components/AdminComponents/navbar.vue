@@ -32,10 +32,6 @@
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
                                 View Profile
                             </a>
-                            <a @click="goToEditProfile"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-                                Edit Profile
-                            </a>
                             <a v-if="isAdmin" @click="goToAdminDashboard"
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
                                 Admin Dashboard
@@ -97,12 +93,6 @@ export default {
                 showDropdown.value = false;
             }
         };
-
-        const goToEditProfile = () => {
-            router.push({ name: 'EditProfile' });
-            showDropdown.value = false;
-        };
-
         const goToAdminDashboard = () => {
             router.push({ name: 'AdminDashboard' });
             showDropdown.value = false;
@@ -135,7 +125,6 @@ export default {
             toggleDropdown,
             goToHome,
             goToProfile,
-            goToEditProfile,
             goToAdminDashboard,
             logout,
             toggleDarkMode,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RoleController extends Controller
 {
@@ -42,13 +43,18 @@ class RoleController extends Controller
     }
     public function assignRole(Request $request, User $user)
     {
-        $request->validate([
-            'role' => 'required|exists:roles,name',
+        Log::info('Assigning role', [
+            'user_id' => $user->id,
+            'role' => $request->role,
         ]);
-
-        $role = Role::where('name', $request->role)->firstOrFail();
-        $user->roles()->sync([$role->id]);
-
+    
+        $request->validate([
+            'role' => 'required|exists:roles,slug',
+        ]);
+    
+        $role = Role::where('slug', $request->role)->firstOrFail();
+        $user->roles()->syncWithoutDetaching([$role->id]);
+    
         return response()->json(['message' => 'Role assigned successfully']);
     }
 

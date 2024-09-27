@@ -1,11 +1,10 @@
-<!-- views/HomePage.vue -->
 <template>
-  <div class="max-w-2xl mx-auto w-full">
-    <div v-if="isLoading">Loading...</div>
-    <div v-else-if="error">{{ error }}</div>
-    <div v-else-if="!posts || posts.length === 0">No posts available.</div>
+  <div class="max-w-2xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+    <div v-if="isLoading" class="text-center py-4">Loading...</div>
+    <div v-else-if="error" class="text-center py-4 text-red-500">{{ error }}</div>
+    <div v-else-if="!posts || posts.length === 0" class="text-center py-4">No posts available.</div>
     <template v-else>
-      <PostCard v-for="post in posts" :key="post.id" :post="post" />
+      <PostCard v-for="post in posts" :key="post.id" :post="post" class="mb-6" />
     </template>
   </div>
 </template>

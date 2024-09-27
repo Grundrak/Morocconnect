@@ -26,10 +26,6 @@
                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
                 View Profile
               </a>
-              <a @click="goToEditProfile"
-                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                Edit Profile
-              </a>
               <a v-if="isAdmin" @click="goToAdminDashboard"
                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
                 Admin Dashboard
@@ -268,10 +264,6 @@ export default {
       }
     }
 
-    const goToEditProfile = () => {
-      router.push({ name: 'EditProfile' })
-      showProfileDropdown.value = false
-    }
 
     const logout = async () => {
       cleanup()
@@ -357,7 +349,6 @@ export default {
       followUser,
       toggleProfileDropdown,
       goToProfile,
-      goToEditProfile,
       logout,
       toggleDarkMode,
       isAdmin,

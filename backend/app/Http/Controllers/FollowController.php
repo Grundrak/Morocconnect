@@ -13,14 +13,14 @@ class FollowController extends Controller
     {
         /** @var User $follower */
         $follower = Auth::user();
-        
+
         if ($follower->id === $user->id) {
             return response()->json(['message' => 'You cannot follow yourself'], 400);
         }
 
         if (!$follower->isFollowing($user)) {
             $follower->following()->attach($user->id);
-            $user->notify(new NewFollowerNotification($follower->id)); //this line will send the id of follower to NewFollower notification
+            $user->notify(new NewFollowerNotification($follower));
             return response()->json(['message' => 'User followed successfully']);
         }
 

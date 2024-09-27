@@ -142,15 +142,15 @@ export default {
     this.fetchUsers();
   },
   methods: {
-    ...mapActions('admin', ['fetchUsers']),
+    ...mapActions('admin', ['fetchUsers', 'updateUser', 'deleteUser']),
     editUser(user) {
       console.log('Editing user:', user);
-      this.selectedUser = user;
+      this.selectedUser = { ...user };
       this.showEditModal = true;
     },
-    deleteUser(userId) {
+    async handleDeleteUser(userId) {
       console.log('Deleting user with ID:', userId);
-      // Implement delete user logic
+      await this.deleteUser(userId);
     },
     viewUserDetails(user) {
       console.log('Viewing details for user:', user);
@@ -165,9 +165,9 @@ export default {
       this.showEditModal = false;
       this.selectedUser = null;
     },
-    saveUser(updatedUser) {
+    async saveUser(updatedUser) {
       console.log('Saving updated user:', updatedUser);
-      // Implement save user logic
+      await this.updateUser(updatedUser);
       this.closeEditModal();
     },
     prevPage() {
@@ -202,6 +202,3 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Add any additional styles here if needed */
-</style>

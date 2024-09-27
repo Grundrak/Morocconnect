@@ -6,7 +6,7 @@
       <div class="flex items-center">
         <img src="https://res.cloudinary.com/dgjynovaj/image/upload/v1725918172/Ellipse_11_bpzft6.svg"
           alt="MarocConnect" class="w-8 h-8 mr-2">
-        <h1 v-if="!isMinimized"
+          <h1 v-if="!isMinimized"
           class="text-base font-medium font-['Plus_Jakarta_Sans'] text-black tracking-[-0.01em] leading-[22px] dark:text-white">
           MarocConnect
         </h1>
@@ -18,7 +18,7 @@
     </div>
     <nav class="flex-1 overflow-y-auto">
       <SidebarItem v-for="item in menuItems" :key="item.text" :icon="item.icon" :text="item.text" :badge="item.badge"
-        :to="item.route" :isMinimized="isMinimized || $winWidth < 768" />
+        :to="item.route" :isMinimized="isMinimized" />
     </nav>
     <div class="p-4 border-t" v-if="!isMinimized">
     </div>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import SidebarItem from './SidebarItem.vue'
 import SvgIcon from './SvgIcon.vue'
@@ -39,7 +39,7 @@ export default {
   setup() {
     const user = ref(null)
     const { width } = useWindowSize()
-    const isMinimized = computed(() => width.value < 768)
+    const isMinimized = ref(false)
     const store = useStore()
     const router = useRouter()
 
@@ -92,6 +92,9 @@ export default {
       fetchUserData()
     })
 
+    watch(width, (newWidth) => {
+      isMinimized.value = newWidth < 768
+    })
     return {
       user,
       logout,

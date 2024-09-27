@@ -14,10 +14,9 @@ class NewFollowerNotification extends Notification
 
     protected $followerId;
 
-    public function __construct(User $followerId)
+    public function __construct(User $follower)
     {
-        $this->followerId = $followerId;
-    }
+        $this->followerId = $follower->id;    }
 
     /**
      * Get the notification's delivery channels.

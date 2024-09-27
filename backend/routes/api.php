@@ -79,5 +79,9 @@ Route::middleware(['cors'])->group(function () {
         Route::get('admin/users', [AdminController::class, 'users']);
         Route::get('admin/posts', [AdminController::class, 'posts']);
         Route::get('admin/comments', [AdminController::class, 'comments']);
+        Route::put('admin/users/{id}', [AdminController::class, 'updateUser']);
+        Route::delete('admin/users/{id}', [AdminController::class, 'deleteUser']);
+        Route::post('users/{user}/award-badge', [BadgeController::class, 'awardBadge']);
+        Route::post('users/{user}/remove-badge', [BadgeController::class, 'removeBadge']);
     });
 });

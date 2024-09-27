@@ -34,4 +34,28 @@ class AdminController extends Controller
     {
         return Comment::with(['user', 'post'])->get();
     }
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'username' => 'required|string|max:255|unique:users,username,' . $id,
+            'location' => 'nullable|string|max:255',
+            'bio' => 'nullable|string',
+            'birthday' => 'nullable|date',
+          
+        ]);
+    
+        $user->update($validatedData);
+    
+        return response()->json($user);
+    }
+    public function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return response()->json(['message' => 'User deleted successfully']);
+    }
 }

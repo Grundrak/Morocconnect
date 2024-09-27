@@ -110,7 +110,7 @@ export default {
     const comments = ref([])
     const commentsLoading = ref(false)
     const showAllComments = ref(false)
-    const defaultAvatar = 'https://res.cloudinary.com/dgjynovaj/image/upload/v1727130788/defaultAvatar_lszkxq.svg' 
+    const defaultAvatar = 'https://res.cloudinary.com/dgjynovaj/image/upload/v1727130788/defaultAvatar_lszkxq.svg'
 
     const currentUser = computed(() => store.getters['auth/currentUser'])
     const postLikes = computed(() => props.post.likes_count || props.post.likes || 0)
@@ -246,3 +246,18 @@ export default {
   }
 }
 </script>
+
+
+<style scoped>
+@media (min-width: 640px) {
+  .w-full {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .max-w-2xl {
+    max-width: 100%;
+  }
+}
+</style>

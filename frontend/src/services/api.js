@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://moroconect.test/api',
-});
+  baseURL: process.env.VUE_APP_API_URL || 'http://moroconect.test/api'});
 
 api.interceptors.request.use(
   (config) => {
