@@ -63,7 +63,7 @@ export default {
     const isMobileScreen = ref(false)
 
     const isAuthenticatedRoute = computed(() => {
-      const authRoutes = ['/home', '/profile']
+      const authRoutes = ['/home', '/profile', '/groups', '/events', '/friends', '/saved', '/pages']
       return authRoutes.some(path => route.path.startsWith(path))
     })
 

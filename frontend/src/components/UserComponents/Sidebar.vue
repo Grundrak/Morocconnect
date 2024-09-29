@@ -44,7 +44,7 @@ export default {
     const router = useRouter()
 
     const menuItems = [
-      { icon: "housesimple", text: "Home", route: "/" },
+      { icon: "housesimple", text: "Home", route: "/home" },
       { icon: "users", text: "Groups", badge: "12", route: "/groups" },
       { icon: "calendar", text: "Events", badge: "12", route: "/events" },
       { icon: "user", text: "Friends", badge: "2", route: "/friends" },

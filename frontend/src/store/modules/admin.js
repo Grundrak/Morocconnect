@@ -7,7 +7,14 @@ export default {
     users: [],
     posts: [],
     comments: [],
-    dashboardData: {},
+    dashboardData: {
+      totalUsers: 0,
+      totalPosts: 0,
+      totalComments: 0,
+      activeUsers: 0,
+      userGrowthData: [],
+      postActivityData: []
+    },
   },
   mutations: {
     SET_USERS(state, users) {
@@ -20,7 +27,10 @@ export default {
       state.comments = comments;
     },
     SET_DASHBOARD_DATA(state, data) {
-      state.dashboardData = data;
+      state.dashboardData = {
+        ...state.dashboardData,
+        ...data,
+      };
     },
     UPDATE_USER(state, updatedUser) {
       const index = state.users.findIndex((user) => user.id === updatedUser.id);
@@ -29,7 +39,7 @@ export default {
       }
     },
     DELETE_USER(state, userId) {
-      state.users = state.users.filter(user => user.id !== userId);
+      state.users = state.users.filter((user) => user.id !== userId);
     },
   },
   actions: {
@@ -67,18 +77,21 @@ export default {
     },
     async updateUser({ commit }, updatedUser) {
       try {
-        const response = await api.put(`/admin/users/${updatedUser.id}`, updatedUser);
-        commit('UPDATE_USER', response.data);
+        const response = await api.put(
+          `/admin/users/${updatedUser.id}`,
+          updatedUser
+        );
+        commit("UPDATE_USER", response.data);
       } catch (error) {
-        console.error('Failed to update user:', error);
+        console.error("Failed to update user:", error);
       }
     },
     async deleteUser({ commit }, userId) {
       try {
         await api.delete(`/admin/users/${userId}`);
-        commit('DELETE_USER', userId);
+        commit("DELETE_USER", userId);
       } catch (error) {
-        console.error('Failed to delete user:', error);
+        console.error("Failed to delete user:", error);
       }
     },
   },

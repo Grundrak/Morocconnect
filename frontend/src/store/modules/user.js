@@ -59,23 +59,52 @@ export default {
         throw error;
       }
     },
-    async followUser({ commit }, userId) {
+    async fetchUserProfile({ commit, rootState }, userId) {
+      commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
       try {
-        const response = await api.post(`/users/${userId}/follow`);
-        commit("REMOVE_SUGGESTED_USER", userId);
-        return response.data;
+        const [userResponse, followersResponse, followingResponse] =
+          await Promise.all([
+            api.get(`/users/${userId}`),
+            api.get(`/users/${userId}/followers`),
+            api.get(`/users/${userId}/following`),
+          ]);
+
+        const currentUserId = rootState.auth.user?.id;
+
+        const userData = {
+          ...userResponse.data,
+          followers_count: followersResponse.data.length,
+          following_count: followingResponse.data.length,
+          is_followed_by_current_user: followersResponse.data.some(
+            (follower) => follower.id === currentUserId
+          ),
+        };
+
+        commit("SET_PROFILE_USER", userData);
+        return userData;
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        commit("SET_ERROR", error.message || "Failed to fetch user profile");
+        throw error;
+      } finally {
+        commit("SET_LOADING", false);
+      }
+    },
+    async followUser({ commit, dispatch }, userId) {
+      try {
+        await api.post(`/users/${userId}/follow`);
+        await dispatch("fetchUserProfile", userId);
       } catch (error) {
         console.error("Error following user:", error);
-        if (error.response && error.response.status === 400) {
-          commit("REMOVE_SUGGESTED_USER", userId);
-        }
         throw error;
       }
     },
-    async unfollowUser({ commit }, userId) {
+
+    async unfollowUser({ commit, dispatch }, userId) {
       try {
-        const response = await api.post(`/users/${userId}/unfollow`);
-        return response.data;
+        await api.post(`/users/${userId}/unfollow`);
+        await dispatch("fetchUserProfile", userId);
       } catch (error) {
         console.error("Error unfollowing user:", error);
         throw error;
@@ -96,35 +125,18 @@ export default {
     },
     async uploadAvatar({ commit }, { avatar }) {
       try {
-        const response = await api.post('/users/avatar', { avatar })
-        commit('SET_CURRENT_USER', response.data)
-        return { success: true, data: response.data }
+        const response = await api.post("/users/avatar", { avatar });
+        commit("SET_CURRENT_USER", response.data);
+        return { success: true, data: response.data };
       } catch (error) {
-        console.error('Error uploading avatar:', error.response?.data || error)
-        return { 
-          success: false, 
-          message: error.response?.data?.message || error.response?.data?.error || 'Avatar upload failed' 
-        }
-      }
-    },
-    async fetchUserProfile({ commit }, userId) {
-      commit("SET_LOADING", true);
-      commit("SET_ERROR", null);
-      try {
-        const response = await api.get(`/users/${userId}`);
-        const userData = {
-          ...response.data,
-          followers_count: response.data.followers_count || 0,
-          following_count: response.data.following_count || 0,
+        console.error("Error uploading avatar:", error.response?.data || error);
+        return {
+          success: false,
+          message:
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            "Avatar upload failed",
         };
-        commit("SET_PROFILE_USER", userData);
-        return userData;
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        commit("SET_ERROR", error.message || "Failed to fetch user profile");
-        throw error;
-      } finally {
-        commit("SET_LOADING", false);
       }
     },
   },

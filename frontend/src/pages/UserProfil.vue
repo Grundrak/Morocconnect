@@ -76,16 +76,15 @@
 <script>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import EditProfile from './EditProfile.vue'
-import Navbar from '../components/AdminComponents/navbar.vue';
+import Navbar from '../components/AdminComponents/navbar.vue'
 
 export default {
-  name: 'UserProfile',
+  name: 'UserProfil',
   components: { EditProfile, Navbar },
   setup() {
     const store = useStore()
-    const router = useRouter()
     const route = useRoute()
     const user = ref(null)
     const currentUser = computed(() => store.getters['auth/currentUser'])
@@ -95,35 +94,12 @@ export default {
     const showEditForm = ref(false)
     const isFollowing = ref(false)
 
-
     const isCurrentUser = computed(() => user.value?.id === currentUser.value?.id)
 
     const avatarUrl = computed(() => {
-      if (!user.value || !user.value.avatar) return defaultAvatar;
-      
-      // Check if it's a full URL
-      if (user.value.avatar.startsWith('http://') || user.value.avatar.startsWith('https://')) {
-        return user.value.avatar;
-      }
-      
-      // If it's a relative path, prepend the backend URL
-      if (user.value.avatar.startsWith('avatars/')) {
-        return `${import.meta.env.VITE_API_URL}/storage/${user.value.avatar}`;
-      }
-      
-      // If it doesn't match any of the above, return the default avatar
-      return defaultAvatar;
-    });
-
-
-    const fetchCurrentUser = async () => {
-      try {
-        await store.dispatch('auth/fetchUser')
-      } catch (err) {
-        console.error('Error fetching current user:', err)
-        error.value = 'Failed to load current user data.'
-      }
-    }
+      if (!user.value || !user.value.avatar) return defaultAvatar
+      return user.value.avatar.startsWith('http') ? user.value.avatar : `${import.meta.env.VITE_API_URL}/storage/${user.value.avatar}`
+    })
 
     const fetchUserProfile = async (userId) => {
       isLoading.value = true
@@ -131,7 +107,7 @@ export default {
       try {
         const userData = await store.dispatch('user/fetchUserProfile', userId)
         user.value = userData
-        isFollowing.value = userData?.is_followed_by_current_user || false
+        isFollowing.value = userData.is_followed_by_current_user || false
       } catch (err) {
         console.error('Error fetching user profile:', err)
         error.value = 'Failed to load user profile. Please try again.'
@@ -139,6 +115,7 @@ export default {
         isLoading.value = false
       }
     }
+
     const toggleFollow = async () => {
       try {
         const action = isFollowing.value ? 'user/unfollowUser' : 'user/followUser'
@@ -161,8 +138,8 @@ export default {
       return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     }
 
+
     onMounted(async () => {
-      await fetchCurrentUser()
       if (route.params.id) {
         await fetchUserProfile(route.params.id)
       }

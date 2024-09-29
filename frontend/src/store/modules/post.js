@@ -1,5 +1,6 @@
-
-import api from '../../services/api'
+import api from "../../services/api";
+import { loadState, saveState } from '@/utils/localStorage';
+const BOOKMARKS_STORAGE_KEY = 'bookmarkedPosts';
 
 export default {
   namespaced: true,
@@ -8,6 +9,7 @@ export default {
     loading: false,
     error: null,
     pagination: null,
+    bookmarkedPosts: loadState(BOOKMARKS_STORAGE_KEY) || [],
   },
   mutations: {
     SET_POSTS(state, posts) {
@@ -22,12 +24,14 @@ export default {
         state.posts.splice(index, 1, { ...state.posts[index], ...updatedPost });
       }
     },
+    REMOVE_POST(state, postId) {
+      state.posts = state.posts.filter((post) => post.id !== postId);
+    },
     UPDATE_POST_LIKES(state, { postId, likesCount, isLiked }) {
-      console.log("Updating post likes:", postId, likesCount, isLiked);
       const post = state.posts.find((p) => p.id === postId);
       if (post) {
         post.likes_count = likesCount;
-        post.likes = likesCount; // Update both properties
+        post.likes = likesCount;
         post.is_liked = isLiked;
       }
     },
@@ -45,6 +49,18 @@ export default {
     },
     SET_ERROR(state, error) {
       state.error = error;
+    },
+    ADD_BOOKMARK(state, post) {
+      if (!state.bookmarkedPosts.some((p) => p.id === post.id)) {
+        state.bookmarkedPosts.push(post);
+        saveState(BOOKMARKS_STORAGE_KEY, state.bookmarkedPosts);
+      }
+    },
+    REMOVE_BOOKMARK(state, postId) {
+      state.bookmarkedPosts = state.bookmarkedPosts.filter(
+        (p) => p.id !== postId
+      );
+      saveState(BOOKMARKS_STORAGE_KEY, state.bookmarkedPosts);
     },
   },
   actions: {
@@ -74,18 +90,50 @@ export default {
     },
     async createPost({ commit }, formData) {
       try {
-        const response = await api.post('/post', formData);
-        commit('ADD_POST', response.data);
+        const response = await api.post("/post", formData);
+        commit("ADD_POST", response.data);
         return { success: true, post: response.data };
       } catch (error) {
-        console.error('Error creating post:', error);
-        return { success: false, error: error.message || 'Failed to create post' };
+        console.error("Error creating post:", error);
+        return {
+          success: false,
+          error: error.message || "Failed to create post",
+        };
+      }
+    },
+    async updatePost({ commit }, { id, formData }) {
+      try {
+        const response = await api.post(`/post/${id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        commit("UPDATE_POST", response.data);
+        return { success: true, post: response.data };
+      } catch (error) {
+        console.error("Error updating post:", error);
+        return {
+          success: false,
+          error: error.message || "Failed to update post",
+        };
+      }
+    },
+    async deletePost({ commit }, postId) {
+      try {
+        await api.delete(`/post/${postId}`);
+        commit("REMOVE_POST", postId);
+        return { success: true };
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        return {
+          success: false,
+          error: error.message || "Failed to delete post",
+        };
       }
     },
     async likePost({ commit }, postId) {
       try {
         const response = await api.post(`/post/${postId}/like`);
-        console.log("Like response:", response.data);
         commit("UPDATE_POST_LIKES", {
           postId,
           likesCount: response.data.likes_count || response.data.likes,
@@ -94,7 +142,6 @@ export default {
         return response.data;
       } catch (error) {
         if (error.response && error.response.status === 400) {
-          // Handle already liked case
           const data = error.response.data;
           commit("UPDATE_POST_LIKES", {
             postId,
@@ -103,17 +150,12 @@ export default {
           });
           return data;
         }
-        console.error(
-          "Error liking post:",
-          error.response ? error.response.data : error
-        );
         throw error;
       }
     },
     async unlikePost({ commit }, postId) {
       try {
         const response = await api.post(`/post/${postId}/unlike`);
-        console.log("Unlike response:", response.data);
         commit("UPDATE_POST_LIKES", {
           postId,
           likesCount: response.data.likes_count || response.data.likes,
@@ -122,7 +164,6 @@ export default {
         return response.data;
       } catch (error) {
         if (error.response && error.response.status === 400) {
-          // Handle already unliked case
           const data = error.response.data;
           commit("UPDATE_POST_LIKES", {
             postId,
@@ -131,10 +172,6 @@ export default {
           });
           return data;
         }
-        console.error(
-          "Error unliking post:",
-          error.response ? error.response.data : error
-        );
         throw error;
       }
     },
@@ -189,11 +226,19 @@ export default {
         throw error;
       }
     },
+    addBookmark({ commit }, post) {
+      commit("ADD_BOOKMARK", post);
+    },
+    removeBookmark({ commit }, postId) {
+      commit("REMOVE_BOOKMARK", postId);
+    },
   },
   getters: {
     allPosts: (state) => state.posts,
     isLoading: (state) => state.loading,
     error: (state) => state.error,
     pagination: (state) => state.pagination,
-  },
+    bookmarkedPosts: state => state.bookmarkedPosts,
+    isPostBookmarked: state => postId => state.bookmarkedPosts.some(p => p.id === postId),
+  }
 };

@@ -5,8 +5,14 @@ import Login from "../pages/Login.vue";
 import Register from "../pages/Register.vue";
 import store from "../store/index";
 import UserProfil from "../pages/UserProfil.vue";
-import EditProfile from '../pages/EditProfile.vue';
 import AdminDashboard from '../pages/AdminDashboard.vue';
+import Groups from '../pages/Groups.vue'
+import Events from '../pages/Events.vue'
+import Friends from '../pages/Friends.vue'
+import Saved from '../pages/Saved.vue'
+import Pages from '../pages/Pages.vue'
+// import Settings from '../pages/Settings.vue'
+// import Support from '../pages/Support.vue'
 
 const routes = [
   {
@@ -23,6 +29,48 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: '/groups',
+    name: 'Groups',
+    component: Groups,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/events',
+    name: 'Events',
+    component: Events,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/friends',
+    name: 'Friends',
+    component: Friends,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/saved',
+    name: 'Saved',
+    component: Saved,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/pages',
+    name: 'Pages',
+    component: Pages,
+    meta: { requiresAuth: true }
+  },
+  // {
+  //   path: '/settings',
+  //   name: 'Settings',
+  //   component: Settings,
+  //   meta: { requiresAuth: true }
+  // },
+  // {
+  //   path: '/support',
+  //   name: 'Support',
+  //   component: Support,
+  //   meta: { requiresAuth: true }
+  // },
   {
     path: '/profil/:id',
     name: 'UserProfil',

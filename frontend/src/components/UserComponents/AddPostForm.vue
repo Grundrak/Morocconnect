@@ -1,48 +1,52 @@
 <template>
-  <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-    <h2 class="text-2xl font-bold mb-4">Add New Post</h2>
-    <form @submit.prevent="submitPost">
-      <div class="mb-4">
-        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-        <input type="text" id="title" v-model="title" 
-               class="mt-1 h-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-      </div>
-      <div class="mb-4">
-        <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
-        <textarea id="content" v-model="content" rows="4"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"></textarea>
-      </div>
-      <div class="mb-4">
-        <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
-        <input type="file" id="image" @change="handleImageUpload"
-               class="mt-1 block w-full text-sm text-gray-500
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded-full file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-blue-50 file:text-blue-700
-                      hover:file:bg-blue-100">
-      </div>
-      <div class="flex justify-end">
-        <button type="button" @click="$emit('close')" 
-                class="mr-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          Cancel
-        </button>
-        <button type="submit" 
-                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          Post
-        </button>
-      </div>
-    </form>
-    <div v-if="error" class="mt-2 text-red-600">{{ error }}</div>
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-[400px]">
+      <h2 class="text-2xl font-bold text-[#09090b] dark:text-white mb-6">Add New Post</h2>
+      <form @submit.prevent="submitPost" class="w-[90%]">
+        <div class="mb-4">
+          <div class="relative">
+            <SvgIcon name="document-text" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input v-model="title" type="text" placeholder="Title"
+              class="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:text-white" />
+          </div>
+        </div>
+        <div class="mb-4">
+          <div class="relative">
+            <SvgIcon name="chat" class="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+            <textarea v-model="content" placeholder="Content"
+              class="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="4"></textarea>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 dark:text-gray-300 mb-2">Image</label>
+          <input type="file" @change="handleImageUpload" accept="image/*"
+            class="w-full p-2 border rounded-lg dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
+        </div>
+        <div class="flex justify-between">
+          <button type="submit"
+            class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
+            Post
+          </button>
+          <button @click="$emit('close')"
+            class="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-200 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500">
+            Cancel
+          </button>
+        </div>
+      </form>
+      <div v-if="error" class="mt-2 text-red-600">{{ error }}</div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref } from 'vue'
 import { useStore } from 'vuex'
+import SvgIcon from '@/components/UserComponents/SvgIcon.vue'
 
 export default {
   name: 'AddPostForm',
+  components: { SvgIcon },
   emits: ['close', 'post-added'],
   setup(props, { emit }) {
     const store = useStore()
@@ -52,7 +56,16 @@ export default {
     const error = ref('')
 
     const handleImageUpload = (event) => {
-      image.value = event.target.files[0]
+      const file = event.target.files[0]
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) { // 2MB limit
+          error.value = 'Image size should be less than 2MB'
+          event.target.value = '' // Clear the file input
+        } else {
+          image.value = file
+          error.value = ''
+        }
+      }
     }
 
     const submitPost = async () => {
@@ -91,3 +104,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+</style>
