@@ -5,10 +5,6 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -91,8 +87,8 @@ class PostControllerTest extends TestCase
     public function test_update()
     {
         [$user, $token] = $this->createAuthenticatedUser();
-        $post = Post::factory()->create();
-    
+        $post = Post::factory()->create(['user_id' => $user->id]);  
+        
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->putJson("/api/post/{$post->id}", [
@@ -110,7 +106,7 @@ class PostControllerTest extends TestCase
     public function test_destroy()
     {
         [$user, $token] = $this->createAuthenticatedUser();
-        $post = Post::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);  // Create post for this user
     
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
